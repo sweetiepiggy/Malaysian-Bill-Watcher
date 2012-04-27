@@ -172,7 +172,7 @@ public class DbAdapter
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID, KEY_LONG_NAME},
+				new String[] {KEY_ROWID, KEY_URL},
 				null, null, null, null,
 				KEY_ROWID + " DESC LIMIT 10", null);
 	}
