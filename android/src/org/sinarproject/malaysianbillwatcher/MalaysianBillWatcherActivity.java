@@ -34,15 +34,18 @@ import android.widget.TextView;
 public class MalaysianBillWatcherActivity extends ListActivity {
 	String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
 
+	DbAdapter mDbHelper;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		DbAdapter dbHelper = new DbAdapter();
-		dbHelper.open(this);
+		mDbHelper = new DbAdapter();
+		/* TODO: should adapter be closed? */
+		mDbHelper.open(this);
 
-		fill_data(dbHelper);
+		fill_data(mDbHelper);
 		init_click();
 	}
 
@@ -52,7 +55,7 @@ public class MalaysianBillWatcherActivity extends ListActivity {
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
 				android.R.layout.simple_list_item_1,
-				c, new String[] {DbAdapter.KEY_URL},
+				c, new String[] {DbAdapter.KEY_LONG_NAME},
 				new int[] {android.R.id.text1});
 		setListAdapter(bills);
 	}
@@ -63,8 +66,12 @@ public class MalaysianBillWatcherActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int pos, long id) {
-				String url = ((TextView) v).getText().toString();
-				view_pdf(url);
+				Cursor c = mDbHelper.fetch_url(id);
+				startManagingCursor(c);
+				if (c.moveToFirst()) {
+					String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
+					view_pdf(url);
+				}
 			}
 		});
 	}
