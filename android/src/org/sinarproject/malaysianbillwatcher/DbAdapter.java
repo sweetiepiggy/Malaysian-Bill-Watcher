@@ -175,7 +175,7 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 10", null);
+				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 50", null);
 	}
 
 	public Cursor fetch_bill(long id)
