@@ -174,7 +174,7 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME},
 				null, null, null, null,
-				KEY_ROWID + " DESC LIMIT 10", null);
+				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 10", null);
 	}
 
 	public Cursor fetch_url(long id)
