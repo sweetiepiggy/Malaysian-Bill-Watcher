@@ -32,20 +32,17 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class MalaysianBillWatcherActivity extends ListActivity {
-	String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
-
-	DbAdapter mDbHelper;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mDbHelper = new DbAdapter();
+		DbAdapter dbHelper = new DbAdapter();
 		/* TODO: should adapter be closed? */
-		mDbHelper.open(this);
+		dbHelper.open(this);
 
-		fill_data(mDbHelper);
+		fill_data(dbHelper);
 		init_click();
 	}
 
@@ -54,9 +51,9 @@ public class MalaysianBillWatcherActivity extends ListActivity {
 		Cursor c = dbHelper.fetch_bills();
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
-				android.R.layout.simple_list_item_1,
-				c, new String[] {DbAdapter.KEY_LONG_NAME},
-				new int[] {android.R.id.text1});
+				android.R.layout.two_line_list_item,
+				c, new String[] {DbAdapter.KEY_LONG_NAME, DbAdapter.KEY_STATUS},
+				new int[] {android.R.id.text1, android.R.id.text2});
 		setListAdapter(bills);
 	}
 
@@ -66,21 +63,13 @@ public class MalaysianBillWatcherActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int pos, long id) {
-				Cursor c = mDbHelper.fetch_url(id);
-				startManagingCursor(c);
-				if (c.moveToFirst()) {
-					String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
-					view_pdf(url);
-				}
+				Intent intent = new Intent(getApplicationContext(), ViewBillActivity.class);
+				Bundle b = new Bundle();
+				b.putLong("row_id", id);
+				intent.putExtras(b);
+				startActivity(intent);
 			}
 		});
-	}
-
-	private void view_pdf(String uri_str)
-	{
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + uri_str), "text/html");
-		startActivity(Intent.createChooser(intent, "Open Web Browser"));
 	}
 }
 

@@ -44,6 +44,7 @@ public class DbAdapter
 	public static final String KEY_URL = "url";
 	public static final String KEY_SUPPORTED_BY = "supported_by";
 	public static final String KEY_YEAR = "year";
+	public static final String KEY_NAME = "name";
 
 	private DatabaseHelper mDbHelper;
 
@@ -172,15 +173,15 @@ public class DbAdapter
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID, KEY_LONG_NAME},
+				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
 				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 10", null);
 	}
 
-	public Cursor fetch_url(long id)
+	public Cursor fetch_bill(long id)
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_URL},
+				new String[] {KEY_URL, KEY_LONG_NAME, KEY_STATUS, KEY_YEAR, KEY_NAME},
 				KEY_ROWID + " = ?", new String[] {Long.toString(id)},
 				null, null, null, null);
 	}
