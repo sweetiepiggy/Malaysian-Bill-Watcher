@@ -170,12 +170,22 @@ public class DbAdapter
 		mDbHelper.close();
 	}
 
+	/* TODO: how should the bills be sorted */
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 50", null);
+				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+	}
+
+	public Cursor fetch_revs(String long_name)
+	{
+		return mDbHelper.mDb.query(DATABASE_TABLE,
+				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR, KEY_NAME},
+				KEY_LONG_NAME + " = ?", new String[] {long_name},
+				null, null,
+				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
 	}
 
 	public Cursor fetch_bill(long id)
@@ -185,6 +195,5 @@ public class DbAdapter
 				KEY_ROWID + " = ?", new String[] {Long.toString(id)},
 				null, null, null, null);
 	}
-
 }
 
