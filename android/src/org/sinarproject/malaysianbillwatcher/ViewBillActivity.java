@@ -19,6 +19,14 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
+import java.net.URL;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -43,6 +51,18 @@ public class ViewBillActivity extends Activity {
 			b = new Bundle();
 		}
 		Long row_id = b.getLong("row_id");
+
+		Button sync_button = new Button(getApplicationContext());
+		sync_button.setText("sync");
+		sync_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				sync();
+			}
+		});
+		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+		layout.addView(sync_button);
+
 
 		DbAdapter dbHelper = new DbAdapter();
 		/* TODO: should adapter be closed? */
@@ -98,6 +118,33 @@ public class ViewBillActivity extends Activity {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + uri_str), "text/html");
 		startActivity(Intent.createChooser(intent, "Open Web Browser"));
+	}
+
+	private void sync()
+	{
+		try {
+//			TextView tview = new TextView(getApplicationContext());
+
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			SAXParser sp = spf.newSAXParser();
+			XMLReader xr = sp.getXMLReader();
+
+			URL url = new URL("http://billwatcher.sinarproject.org/feeds/");
+//			byte[] buf = new byte[256];
+//			url.openStream().read(buf);
+
+//			tview.setText("[" + new String(buf) + "]");
+//			tview.setText("[junk]");
+//			LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+//			layout.addView(tview);
+
+
+			RssHandler rss_handler = new RssHandler();
+			xr.setContentHandler(rss_handler);
+			xr.parse(new InputSource(url.openStream()));
+		} catch (Exception e) {
+			throw new Error(e);
+		}
 	}
 }
 
