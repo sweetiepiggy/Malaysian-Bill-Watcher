@@ -78,6 +78,11 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		private String long_name = "";
 		private String year = "";
 		private String status = "";
+		private String url = "";
+		private String name = "";
+		private String read_by = "";
+		private String supported_by = "";
+		private String date_presented = "";
 		private String update_date = "";
 
 		@Override
@@ -99,6 +104,11 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 				long_name = "";
 				year = "";
 				status = "";
+				url = "";
+				name = "";
+				read_by = "";
+				supported_by = "";
+				date_presented = "";
 				update_date = "";
 			} else if (in_item) {
 				if (local_name.equalsIgnoreCase("title")) {
@@ -130,6 +140,16 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 						year = val;
 					} else if (key.equalsIgnoreCase("status")) {
 						status = val;
+					} else if (key.equalsIgnoreCase("url")) {
+						url = val;
+					} else if (key.equalsIgnoreCase("name")) {
+						name = val;
+					} else if (key.equalsIgnoreCase("read_by")) {
+						read_by = val;
+					} else if (key.equalsIgnoreCase("supported_by")) {
+						supported_by = val;
+					} else if (key.equalsIgnoreCase("date_presented")) {
+						date_presented = val;
 					}
 				}
 			}
@@ -137,7 +157,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 		private String format_date(String date)
 		{
-			Log.i(TAG, "in_date:[" + date + "]");
+			//Log.i(TAG, "in_date:[" + date + "]");
 
 			String[] fields = date.split("\\s+");
 
@@ -151,11 +171,11 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 				String time = fields[4];
 				ret = year + "-" + month + "-" + day + " " + time;
 			} else {
-				Log.i(TAG, "length:[" + fields.length + "]");
+				//Log.i(TAG, "length:[" + fields.length + "]");
 				ret = date;
 			}
 
-			Log.i(TAG, "out_date:[" + ret + "]");
+			//Log.i(TAG, "out_date:[" + ret + "]");
 
 			return ret;
 		}
@@ -195,7 +215,11 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		{
 			Log.i(TAG, "long_name:[" + long_name + "]");
 			Log.i(TAG, "year:[" + year + "]");
-			Log.i(TAG, "status:[" + status + "]");
+			Log.i(TAG, "url:[" + url + "]");
+			Log.i(TAG, "name:[" + name + "]");
+			Log.i(TAG, "read_by:[" + read_by + "]");
+			Log.i(TAG, "supported_by:[" + supported_by + "]");
+			Log.i(TAG, "date_presented:[" + date_presented + "]");
 			Log.i(TAG, "update_date:[" + update_date + "]");
 		}
 
