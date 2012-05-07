@@ -170,7 +170,7 @@ public class DbAdapter
 		mDbHelper.close();
 	}
 
-	/* TODO: how should the bills be sorted */
+	/* TODO: how should the bills be sorted? */
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
@@ -194,6 +194,14 @@ public class DbAdapter
 				new String[] {KEY_URL, KEY_LONG_NAME, KEY_STATUS, KEY_YEAR, KEY_NAME},
 				KEY_ROWID + " = ?", new String[] {Long.toString(id)},
 				null, null, null, null);
+	}
+
+	public Cursor fetch_last_update()
+	{
+		return mDbHelper.mDb.query(DATABASE_TABLE,
+				new String[] {KEY_ROWID, KEY_UPDATE_DATE},
+				null, null, null, null,
+				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 1", null);
 	}
 }
 

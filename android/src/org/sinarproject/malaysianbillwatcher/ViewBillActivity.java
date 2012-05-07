@@ -49,7 +49,7 @@ public class ViewBillActivity extends Activity {
 		sync_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
-				SyncTask sync = new SyncTask();
+				SyncTask sync = new SyncTask(this);
 				sync.execute();
 			}
 		});

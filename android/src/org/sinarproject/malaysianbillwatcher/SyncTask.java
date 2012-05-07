@@ -20,7 +20,6 @@
 package org.sinarproject.malaysianbillwatcher;
 
 import java.net.URL;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -31,6 +30,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -39,6 +40,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 {
 	private final String TAG = "AsyncTask";
 	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
+	private Context mCtx;
+
+	public SyncTask(Context ctx)
+	{
+		mCtx = ctx;
+	}
 
 	@Override
 	protected Void doInBackground(Void... params)
@@ -75,6 +82,8 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 	{
 		private Boolean in_item = false;
 		private String cur_chars = "";
+		private String last_update = "1970-01-01 00:00:00";
+
 		private String long_name = "";
 		private String year = "";
 		private String status = "";
@@ -84,6 +93,20 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		private String supported_by = "";
 		private String date_presented = "";
 		private String update_date = "";
+
+		@Override
+		public void startDocument()
+		{
+			DbAdapter dbHelper = new DbAdapter();
+			dbHelper.open(mCtx);
+			Cursor c = dbHelper.fetch_last_update();
+			if (c.moveToFirst()) {
+				String last_update = c.getString(c.getColumnIndex(DbAdapter.KEY_UPDATE_DATE));
+			}
+			c.close();
+			dbHelper.close();
+			Log.i(TAG, "last_update:[" + last_update + "]");
+		}
 
 		@Override
 		public void startElement(String uri, String local_name, String q_name,
@@ -99,7 +122,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 				throws SAXException
 		{
 			if (local_name.equalsIgnoreCase("item")) {
-				update_db();
+				/* TODO: should use strftime() first? */
+				Log.i(TAG, "last_update:[" + last_update + "]");
+				Log.i(TAG, "update_date:[" + update_date + "]");
+				if (last_update.compareTo(update_date) < 0) {
+					update_db();
+				}
 				in_item = false;
 				long_name = "";
 				year = "";
@@ -111,6 +139,9 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 				date_presented = "";
 				update_date = "";
 			} else if (in_item) {
+				//Log.i(TAG, "local_name:[" + local_name + "]");
+				//Log.i(TAG, "cur_chars:[" + cur_chars + "]");
+
 				if (local_name.equalsIgnoreCase("title")) {
 					long_name = strip_ws(new String(cur_chars));
 				} else if (local_name.equalsIgnoreCase("description")) {
