@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -168,6 +169,24 @@ public class DbAdapter
 	public void close()
 	{
 		mDbHelper.close();
+	}
+
+	/** @return row_id or -1 if failed */
+	public long create_bill(String long_name, String year, String url,
+			String name, String read_by, String supported_by,
+			String date_presented, String update_date)
+	{
+		ContentValues initial_values = new ContentValues();
+		initial_values.put(KEY_LONG_NAME, long_name);
+		initial_values.put(KEY_YEAR, year);
+		initial_values.put(KEY_URL, url);
+		initial_values.put(KEY_NAME, name);
+		initial_values.put(KEY_READ_BY, read_by);
+		initial_values.put(KEY_SUPPORTED_BY, supported_by);
+		initial_values.put(KEY_DATE_PRESENTED, date_presented);
+		initial_values.put(KEY_UPDATE_DATE, update_date);
+
+		return mDbHelper.mDb.insert(DATABASE_TABLE, null, initial_values);
 	}
 
 	/* TODO: how should the bills be sorted? */

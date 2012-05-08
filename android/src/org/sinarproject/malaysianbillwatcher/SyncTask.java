@@ -80,6 +80,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 	private class RssHandler extends DefaultHandler
 	{
+		private Boolean done = false;
 		private Boolean in_item = false;
 		private String cur_chars = "";
 		private String last_update = "1970-01-01 00:00:00";
@@ -101,7 +102,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			dbHelper.open(mCtx);
 			Cursor c = dbHelper.fetch_last_update();
 			if (c.moveToFirst()) {
-				String last_update = c.getString(c.getColumnIndex(DbAdapter.KEY_UPDATE_DATE));
+				last_update = c.getString(c.getColumnIndex(DbAdapter.KEY_UPDATE_DATE));
 			}
 			c.close();
 			dbHelper.close();
@@ -112,8 +113,10 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		public void startElement(String uri, String local_name, String q_name,
 				Attributes attr) throws SAXException
 		{
-			if (local_name.equalsIgnoreCase("item")) {
-				in_item = true;
+			if (!done) {
+				if (local_name.equalsIgnoreCase("item")) {
+					in_item = true;
+				}
 			}
 		}
 
@@ -121,41 +124,48 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		public void endElement(String uri, String local_name, String q_name)
 				throws SAXException
 		{
-			if (local_name.equalsIgnoreCase("item")) {
-				/* TODO: should use strftime() first? */
-				Log.i(TAG, "last_update:[" + last_update + "]");
-				Log.i(TAG, "update_date:[" + update_date + "]");
-				if (last_update.compareTo(update_date) < 0) {
-					update_db();
-				}
-				in_item = false;
-				long_name = "";
-				year = "";
-				status = "";
-				url = "";
-				name = "";
-				read_by = "";
-				supported_by = "";
-				date_presented = "";
-				update_date = "";
-			} else if (in_item) {
-				//Log.i(TAG, "local_name:[" + local_name + "]");
-				//Log.i(TAG, "cur_chars:[" + cur_chars + "]");
+			if (!done) {
+				if (local_name.equalsIgnoreCase("item")) {
+					/* TODO: should use strftime() first? */
+					Log.i(TAG, "last_update:[" + last_update + "]");
+					Log.i(TAG, "update_date:[" + update_date + "]");
+					if (last_update.compareTo(update_date) < 0) {
+						update_db();
+					} else {
+						done = true;
+						Log.i(TAG, "done updating");
+					}
+					in_item = false;
+					long_name = "";
+					year = "";
+					status = "";
+					url = "";
+					name = "";
+					read_by = "";
+					supported_by = "";
+					date_presented = "";
+					update_date = "";
+				} else if (in_item) {
+					//Log.i(TAG, "local_name:[" + local_name + "]");
+					//Log.i(TAG, "cur_chars:[" + cur_chars + "]");
 
-				if (local_name.equalsIgnoreCase("title")) {
-					long_name = strip_ws(new String(cur_chars));
-				} else if (local_name.equalsIgnoreCase("description")) {
-					parse_description(cur_chars);
-				} else if (local_name.equalsIgnoreCase("pubDate")) {
-					update_date = format_date(strip_ws(new String(cur_chars)));
+					if (local_name.equalsIgnoreCase("title")) {
+						long_name = strip_ws(new String(cur_chars));
+					} else if (local_name.equalsIgnoreCase("description")) {
+						parse_description(cur_chars);
+					} else if (local_name.equalsIgnoreCase("pubDate")) {
+						update_date = format_date(strip_ws(new String(cur_chars)));
+					}
 				}
+				cur_chars = "";
 			}
-			cur_chars = "";
 		}
 
 		@Override
 		public void characters(char[] ch, int start, int len) throws SAXException {
-			cur_chars += new String(ch, start, len);
+			if (!done) {
+				cur_chars += new String(ch, start, len);
+			}
 		}
 
 		private void parse_description(String desc)
@@ -167,20 +177,22 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 					String val = line.substring(idx + 1);
 					key = strip_ws(key);
 					val = strip_ws(val);
-					if (key.equalsIgnoreCase("year")) {
-						year = val;
-					} else if (key.equalsIgnoreCase("status")) {
-						status = val;
-					} else if (key.equalsIgnoreCase("url")) {
-						url = val;
-					} else if (key.equalsIgnoreCase("name")) {
-						name = val;
-					} else if (key.equalsIgnoreCase("read_by")) {
-						read_by = val;
-					} else if (key.equalsIgnoreCase("supported_by")) {
-						supported_by = val;
-					} else if (key.equalsIgnoreCase("date_presented")) {
-						date_presented = val;
+					if (!val.equals("None")) {
+						if (key.equalsIgnoreCase("year")) {
+							year = val;
+						} else if (key.equalsIgnoreCase("status")) {
+							status = val;
+						} else if (key.equalsIgnoreCase("url")) {
+							url = val;
+						} else if (key.equalsIgnoreCase("name")) {
+							name = val;
+						} else if (key.equalsIgnoreCase("read_by")) {
+							read_by = val;
+						} else if (key.equalsIgnoreCase("supported_by")) {
+							supported_by = val;
+						} else if (key.equalsIgnoreCase("date_presented")) {
+							date_presented = val;
+						}
 					}
 				}
 			}
@@ -244,6 +256,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 		private void update_db()
 		{
+			Log.i(TAG, "inserting new bill");
 			Log.i(TAG, "long_name:[" + long_name + "]");
 			Log.i(TAG, "year:[" + year + "]");
 			Log.i(TAG, "url:[" + url + "]");
@@ -252,6 +265,13 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			Log.i(TAG, "supported_by:[" + supported_by + "]");
 			Log.i(TAG, "date_presented:[" + date_presented + "]");
 			Log.i(TAG, "update_date:[" + update_date + "]");
+
+			DbAdapter dbHelper = new DbAdapter();
+			dbHelper.open_readwrite(mCtx);
+
+			dbHelper.create_bill(long_name, year, url, name, read_by, supported_by, date_presented, update_date);
+
+			dbHelper.close();
 		}
 
 		private String strip_ws(String s)
