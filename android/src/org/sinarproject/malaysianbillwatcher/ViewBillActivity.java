@@ -53,19 +53,8 @@ public class ViewBillActivity extends Activity {
 				sync.execute();
 			}
 		});
-		Button main_button = new Button(getApplicationContext());
-		main_button.setText("main");
-		main_button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				Intent intent = new Intent(getApplicationContext(), MalaysianBillWatcherActivity.class);
-				startActivity(intent);
-			}
-		});
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		layout.addView(sync_button);
-		layout.addView(main_button);
-
 
 		DbAdapter dbHelper = new DbAdapter();
 		/* TODO: should adapter be closed? */

@@ -19,57 +19,37 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class MalaysianBillWatcherActivity extends ListActivity {
+public class MalaysianBillWatcherActivity extends Activity {
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
 
-		DbAdapter dbHelper = new DbAdapter();
-		/* TODO: should adapter be closed? */
-		dbHelper.open(this);
-
-		fill_data(dbHelper);
-		init_click();
-	}
-
-	private void fill_data(DbAdapter dbHelper)
-	{
-		Cursor c = dbHelper.fetch_bills();
-		startManagingCursor(c);
-		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
-				android.R.layout.two_line_list_item,
-				c, new String[] {DbAdapter.KEY_LONG_NAME, DbAdapter.KEY_STATUS},
-				new int[] {android.R.id.text1, android.R.id.text2});
-		setListAdapter(bills);
-	}
-
-	private void init_click()
-	{
-		ListView lv = getListView();
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
-					int pos, long id) {
-				Intent intent = new Intent(getApplicationContext(), ViewBillActivity.class);
-				Bundle b = new Bundle();
-				b.putLong("row_id", id);
-				intent.putExtras(b);
+		TextView browse = (TextView) findViewById(R.id.browse);
+		browse.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				Intent intent = new Intent(getApplicationContext(), BrowseActivity.class);
 				startActivity(intent);
 			}
 		});
+
+//		TextView search = (TextView) findViewById(R.id.search);
+//		browse.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View v)
+//			{
+//				Intent intent = new Intent(getApplicationContext(), SearcheActivity.class);
+//				startActivity(intent);
+//			}
+//		});
 	}
 }
 
