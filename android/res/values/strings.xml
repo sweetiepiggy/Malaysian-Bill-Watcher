@@ -23,7 +23,9 @@
 <resources>
 	<string name="app_name">Malaysian Bill Watcher</string>
 	<string name="view_bill">View PDF</string>
-	<string name="browse_bills">Browse Bills</string>
-	<string name="search_bills">Search Bills</string>
+	<string name="browse_bills">Browse\nBills</string>
+	<string name="search_bills">Search\nBills</string>
+	<string name="sync">Sync</string>
+	<string name="syncing">Syncing...</string>
 </resources>
 

@@ -44,18 +44,6 @@ public class ViewBillActivity extends Activity {
 		}
 		Long row_id = b.getLong("row_id");
 
-		Button sync_button = new Button(getApplicationContext());
-		sync_button.setText("sync");
-		sync_button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				SyncTask sync = new SyncTask(getApplicationContext());
-				sync.execute();
-			}
-		});
-		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
-		layout.addView(sync_button);
-
 		DbAdapter dbHelper = new DbAdapter();
 		/* TODO: should adapter be closed? */
 		dbHelper.open(this);

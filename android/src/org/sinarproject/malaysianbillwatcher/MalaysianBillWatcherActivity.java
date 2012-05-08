@@ -23,7 +23,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class MalaysianBillWatcherActivity extends Activity {
 
@@ -33,7 +34,7 @@ public class MalaysianBillWatcherActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		TextView browse = (TextView) findViewById(R.id.browse);
+		Button browse = (Button) findViewById(R.id.browse);
 		browse.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
@@ -50,6 +51,16 @@ public class MalaysianBillWatcherActivity extends Activity {
 //				startActivity(intent);
 //			}
 //		});
+
+		Button sync = (Button) findViewById(R.id.sync);
+		sync.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				SyncTask sync = new SyncTask(getApplicationContext());
+				sync.execute();
+				Toast.makeText(getApplicationContext(), R.string.syncing, Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 }
 
