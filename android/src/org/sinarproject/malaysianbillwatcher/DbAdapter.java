@@ -177,6 +177,8 @@ public class DbAdapter
 			String supported_by, String date_presented,
 			String update_date)
 	{
+		long ret = -1;
+
 		ContentValues initial_values = new ContentValues();
 		initial_values.put(KEY_LONG_NAME, long_name);
 		initial_values.put(KEY_YEAR, year);
@@ -188,7 +190,21 @@ public class DbAdapter
 		initial_values.put(KEY_DATE_PRESENTED, date_presented);
 		initial_values.put(KEY_UPDATE_DATE, update_date);
 
-		return mDbHelper.mDb.insert(DATABASE_TABLE, null, initial_values);
+		Cursor c = fetch_bill(long_name, name);
+		/* bill already exists, just update it */
+		if (c.moveToFirst()) {
+			long row_id = c.getLong(c.getColumnIndex(KEY_ROWID));
+			mDbHelper.mDb.update(DATABASE_TABLE, initial_values,
+				KEY_ROWID + " = ?",
+				new String[] {Long.toString(row_id)});
+
+		/* create new bill */
+		} else {
+			ret =  mDbHelper.mDb.insert(DATABASE_TABLE, null,
+				initial_values);
+		}
+
+		return ret;
 	}
 
 	/* TODO: how should the bills be sorted? */
@@ -199,6 +215,16 @@ public class DbAdapter
 				null, null, null, null,
 				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
 	}
+
+	public Cursor fetch_bill(String long_name, String name)
+	{
+		return mDbHelper.mDb.query(DATABASE_TABLE,
+				new String[] {KEY_ROWID},
+				KEY_LONG_NAME + " = ? AND " + KEY_NAME + " = ?",
+				new String[] {long_name, name},
+				null, null, null);
+	}
+
 
 	public Cursor fetch_revs(String long_name)
 	{
