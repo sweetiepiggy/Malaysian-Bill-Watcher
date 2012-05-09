@@ -34,13 +34,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
-
+import android.widget.Toast;
 
 public class SyncTask extends AsyncTask<Void, Void, Void>
 {
 	private final String TAG = "AsyncTask";
 	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
 	private Context mCtx;
+	private int bill_cnt = 0;
 
 	public SyncTask(Context ctx)
 	{
@@ -70,7 +71,9 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 	@Override
 	protected void onPostExecute(Void result)
 	{
-//		Toast.makeText(getApplicationContext(), "Done syncing", Toast.LENGTH_SHORT).show();
+		Toast.makeText(mCtx,
+				Integer.toString(bill_cnt) + " update(s) found",
+				Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -256,6 +259,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 		private void update_db()
 		{
+			++bill_cnt;
 			Log.i(TAG, "inserting new bill");
 			Log.i(TAG, "long_name:[" + long_name + "]");
 			Log.i(TAG, "year:[" + year + "]");
