@@ -32,7 +32,7 @@
 		android:layout_height="fill_parent"
 		android:layout_gravity="center"
 		android:gravity="center"
-		android:drawableTop="@android:drawable/ic_menu_view"
+		android:drawableTop="@android:drawable/ic_menu_search"
 		android:text="@string/browse_bills" />
 	<!--<Button
 		android:id="@+id/search"
