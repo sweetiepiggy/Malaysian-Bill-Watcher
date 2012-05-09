@@ -172,13 +172,15 @@ public class DbAdapter
 	}
 
 	/** @return row_id or -1 if failed */
-	public long create_bill(String long_name, String year, String url,
-			String name, String read_by, String supported_by,
-			String date_presented, String update_date)
+	public long create_bill(String long_name, String year, String status,
+			String url, String name, String read_by,
+			String supported_by, String date_presented,
+			String update_date)
 	{
 		ContentValues initial_values = new ContentValues();
 		initial_values.put(KEY_LONG_NAME, long_name);
 		initial_values.put(KEY_YEAR, year);
+		initial_values.put(KEY_STATUS, status);
 		initial_values.put(KEY_URL, url);
 		initial_values.put(KEY_NAME, name);
 		initial_values.put(KEY_READ_BY, read_by);

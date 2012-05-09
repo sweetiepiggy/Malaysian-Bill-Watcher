@@ -259,6 +259,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			Log.i(TAG, "inserting new bill");
 			Log.i(TAG, "long_name:[" + long_name + "]");
 			Log.i(TAG, "year:[" + year + "]");
+			Log.i(TAG, "status:[" + status + "]");
 			Log.i(TAG, "url:[" + url + "]");
 			Log.i(TAG, "name:[" + name + "]");
 			Log.i(TAG, "read_by:[" + read_by + "]");
@@ -269,7 +270,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(mCtx);
 
-			dbHelper.create_bill(long_name, year, url, name, read_by, supported_by, date_presented, update_date);
+			dbHelper.create_bill(long_name, year, status, url, name, read_by, supported_by, date_presented, update_date);
 
 			dbHelper.close();
 		}
