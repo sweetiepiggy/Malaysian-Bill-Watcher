@@ -72,7 +72,8 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 	protected void onPostExecute(Void result)
 	{
 		Toast.makeText(mCtx,
-				Integer.toString(bill_cnt) + " update(s) found",
+				Integer.toString(bill_cnt) + " " +
+				mCtx.getResources().getString(R.string.updates_found),
 				Toast.LENGTH_SHORT).show();
 	}
 
