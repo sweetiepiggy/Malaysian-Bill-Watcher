@@ -29,6 +29,9 @@
 	<string name="syncing">Syncing...</string>
 	<string name="about">About</string>
 	<string name="updates_found">update(s) found</string>
+	<string name="bill_name">Bill Name</string>
+	<string name="bill_name_hint">Search by name of bill</string>
+	<string name="status">Status</string>
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project sinarproject@gmail.com\n\n
 Malaysian Bill Watcher is free software; you can redistribute it and/or modify

@@ -32,16 +32,16 @@
 		android:layout_height="fill_parent"
 		android:layout_gravity="center"
 		android:gravity="center"
-		android:drawableTop="@android:drawable/ic_menu_search"
+		android:drawableTop="@android:drawable/ic_menu_agenda"
 		android:text="@string/browse_bills" />
-	<!--<Button
+	<Button
 		android:id="@+id/search"
 		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
 		android:layout_gravity="center"
 		android:gravity="center"
 		android:drawableTop="@android:drawable/ic_menu_search"
-		android:text="@string/search_bills" />-->
+		android:text="@string/search_bills" />
 	<Button
 		android:id="@+id/sync"
 		android:layout_width="wrap_content"

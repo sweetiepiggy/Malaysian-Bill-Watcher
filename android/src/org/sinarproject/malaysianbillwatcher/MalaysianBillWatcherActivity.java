@@ -46,14 +46,14 @@ public class MalaysianBillWatcherActivity extends Activity {
 			}
 		});
 
-//		TextView search = (TextView) findViewById(R.id.search);
-//		browse.setOnClickListener(new View.OnClickListener() {
-//			public void onClick(View v)
-//			{
-//				Intent intent = new Intent(getApplicationContext(), SearcheActivity.class);
-//				startActivity(intent);
-//			}
-//		});
+		Button search = (Button) findViewById(R.id.search);
+		search.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+				startActivity(intent);
+			}
+		});
 
 		Button sync = (Button) findViewById(R.id.sync);
 		sync.setOnClickListener(new View.OnClickListener() {
