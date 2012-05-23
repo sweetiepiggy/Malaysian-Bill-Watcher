@@ -20,7 +20,10 @@
 package org.sinarproject.malaysianbillwatcher;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 
 public class SearchActivity extends Activity {
 	private DbAdapter mDbHelper;
@@ -31,9 +34,23 @@ public class SearchActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search);
 
-		//mDbHelper = new DbAdapter();
+		mDbHelper = new DbAdapter();
 		/* TODO: close() */
-		//dbHelper.open(this);
+		mDbHelper.open(this);
+
+		init_status_spinner();
+	}
+
+	private void init_status_spinner()
+	{
+		Cursor c = mDbHelper.fetch_status();
+		startManagingCursor(c);
+		SimpleCursorAdapter status = new SimpleCursorAdapter(this,
+				android.R.layout.simple_spinner_item,
+				c, new String[] {DbAdapter.KEY_STATUS},
+				new int[] {android.R.id.text1});
+		Spinner status_spinner = (Spinner) findViewById(R.id.status_spinner);
+		status_spinner.setAdapter(status);
 	}
 }
 

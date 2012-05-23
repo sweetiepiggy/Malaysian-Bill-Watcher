@@ -250,5 +250,12 @@ public class DbAdapter
 				null, null, null, null,
 				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 1", null);
 	}
+
+	public Cursor fetch_status()
+	{
+		return mDbHelper.mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_STATUS},
+				"length(" + KEY_STATUS + ") != 0", null,
+				KEY_STATUS, null, KEY_STATUS + " ASC", null);
+	}
 }
 
