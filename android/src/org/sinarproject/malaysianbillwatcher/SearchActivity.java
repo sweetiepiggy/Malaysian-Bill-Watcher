@@ -20,17 +20,26 @@
 package org.sinarproject.malaysianbillwatcher;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends Activity
+{
 	private DbAdapter mDbHelper;
+	private String m_status = "";
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search);
 
@@ -39,6 +48,7 @@ public class SearchActivity extends Activity {
 		mDbHelper.open(this);
 
 		init_status_spinner();
+		init_search_button();
 	}
 
 	private void init_status_spinner()
@@ -51,6 +61,37 @@ public class SearchActivity extends Activity {
 				new int[] {android.R.id.text1});
 		Spinner status_spinner = (Spinner) findViewById(R.id.status_spinner);
 		status_spinner.setAdapter(status);
+
+		status_spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent,
+					View selected_item, int pos,
+					long id)
+			{
+				m_status = ((Cursor)parent.getItemAtPosition(pos)).getString(1);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parentView)
+			{
+			}
+		});
+	}
+
+	private void init_search_button()
+	{
+		Button search_button = (Button) findViewById(R.id.search_button);
+		search_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				Intent intent = new Intent(getApplicationContext(), BrowseActivity.class);
+				Bundle b = new Bundle();
+				b.putString("bill_name", ((EditText) findViewById(R.id.bill_name_entry)).getText().toString());
+				b.putString("status", m_status);
+				intent.putExtras(b);
+				startActivity(intent);
+			}
+		});
 	}
 }
 
