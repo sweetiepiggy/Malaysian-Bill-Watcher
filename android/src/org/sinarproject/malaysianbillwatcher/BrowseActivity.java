@@ -37,16 +37,21 @@ public class BrowseActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		DbAdapter dbHelper = new DbAdapter();
+
+		Bundle b = getIntent().getExtras();
+		String bill_name = (b == null) ? "" : b.getString("bill_name");
+		String status = (b == null) ? "" : b.getString("status");
+
 		/* TODO: should adapter be closed? */
 		dbHelper.open(this);
 
-		fill_data(dbHelper);
+		fill_data(dbHelper, bill_name, status);
 		init_click();
 	}
 
-	private void fill_data(DbAdapter dbHelper)
+	private void fill_data(DbAdapter dbHelper, String bill_name, String status)
 	{
-		Cursor c = dbHelper.fetch_bills();
+		Cursor c = dbHelper.fetch_bills(bill_name, status);
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
 				android.R.layout.two_line_list_item,

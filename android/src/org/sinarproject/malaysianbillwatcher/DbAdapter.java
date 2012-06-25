@@ -216,6 +216,18 @@ public class DbAdapter
 				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
 	}
 
+	/* TODO: how should the bills be sorted? */
+	public Cursor fetch_bills(String bill_name, String status)
+	{
+		return mDbHelper.mDb.query(DATABASE_TABLE,
+				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
+				KEY_LONG_NAME + " LIKE ? AND " +
+					"(" + KEY_STATUS + " = ? OR \"\" = ?)",
+				new String[] {"%" + bill_name + "%", status, status},
+				null, null,
+				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+	}
+
 	public Cursor fetch_bill(String long_name, String name)
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
