@@ -225,7 +225,8 @@ public class DbAdapter
 					"(" + KEY_STATUS + " = ? OR \"\" = ?)",
 				new String[] {"%" + bill_name + "%", status, status},
 				null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+				//"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+				KEY_ROWID + " DESC ", null);
 	}
 
 	public Cursor fetch_bill(String long_name, String name)
