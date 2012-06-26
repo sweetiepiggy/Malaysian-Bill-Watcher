@@ -18,43 +18,66 @@
     along with Malaysian Bill Watcher; if not, see <http://www.gnu.org/licenses/>.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/layout"
-	android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent" >
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/layout"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
 
-	<TextView
-		android:id="@+id/bill_name"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:textStyle="bold"
-		android:text="@string/bill_name" />
-	<EditText
-		android:id="@+id/bill_name_entry"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/bill_name_hint"
-		android:background="@android:drawable/editbox_background"/>
+		<TextView
+			android:id="@+id/bill_name"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="@string/bill_name" />
+		<EditText
+			android:id="@+id/bill_name_entry"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/bill_name_hint"
+			android:background="@android:drawable/editbox_background"/>
 
-	<TextView
-		android:id="@+id/status_label"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:textStyle="bold"
-		android:text="@string/status" />
-	<Spinner
-		android:id="@+id/status_spinner"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:drawSelectorOnTop="true"
-		android:prompt="@string/status"/>
+		<TextView
+			android:id="@+id/status_label"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="@string/status" />
+		<Spinner
+			android:id="@+id/status_spinner"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:drawSelectorOnTop="true"
+			android:prompt="@string/status"/>
 
-	<Button
-		android:id="@+id/search_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:drawableLeft="@android:drawable/ic_menu_search"
-		android:text="@string/search" />
-</LinearLayout>
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="@string/last_between" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+			<Button
+				android:id="@+id/after_date_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+			<Button
+				android:id="@+id/before_date_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+
+		<Button
+			android:id="@+id/search_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableLeft="@android:drawable/ic_menu_search"
+			android:text="@string/search" />
+	</LinearLayout>
+</ScrollView>
 
