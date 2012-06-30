@@ -213,7 +213,7 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
 	}
 
 	/* TODO: how should the bills be sorted? */
@@ -225,7 +225,7 @@ public class DbAdapter
 					"(" + KEY_STATUS + " = ? OR \"\" = ?)",
 				new String[] {"%" + bill_name + "%", status, status},
 				null, null,
-				//"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+//				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
 				KEY_ROWID + " DESC ", null);
 	}
 
@@ -245,7 +245,7 @@ public class DbAdapter
 				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR, KEY_NAME},
 				KEY_LONG_NAME + " = ?", new String[] {long_name},
 				null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC ", null);
+				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
 	}
 
 	public Cursor fetch_bill(long id)
@@ -261,7 +261,19 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_UPDATE_DATE},
 				null, null, null, null,
-				"strftime(" + KEY_UPDATE_DATE + ") DESC LIMIT 1", null);
+				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC LIMIT 1", null);
+	}
+
+	public Cursor fetch_first_update()
+	{
+		return mDbHelper.mDb.query(DATABASE_TABLE,
+				new String[] {KEY_ROWID,
+					"strftime(\"%Y\", " + KEY_UPDATE_DATE + ")",
+					"strftime(\"%m\", " + KEY_UPDATE_DATE + ")",
+					"strftime(\"%d\", " + KEY_UPDATE_DATE + ")",
+				},
+				null, null, null, null,
+				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") ASC LIMIT 1", null);
 	}
 
 	public Cursor fetch_status()

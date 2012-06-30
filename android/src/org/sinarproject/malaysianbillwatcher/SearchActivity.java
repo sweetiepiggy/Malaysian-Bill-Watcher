@@ -74,13 +74,24 @@ public class SearchActivity extends Activity
 		init_date_button(R.id.after_date_button, AFTER_DATE_DIALOG_ID);
 		init_date_button(R.id.before_date_button, BEFORE_DATE_DIALOG_ID);
 
-		final Calendar c = Calendar.getInstance();
-		before_year = c.get(Calendar.YEAR);
-		before_month = c.get(Calendar.MONTH);
-		before_day = c.get(Calendar.DAY_OF_MONTH);
-		after_year = before_year;
-		after_month = before_month;
-		after_day = before_day;
+		final Calendar cal = Calendar.getInstance();
+		before_year = cal.get(Calendar.YEAR);
+		before_month = cal.get(Calendar.MONTH);
+		before_day = cal.get(Calendar.DAY_OF_MONTH);
+
+		Cursor c = mDbHelper.fetch_first_update();
+		startManagingCursor(c);
+		if (c.moveToFirst()) {
+			/* TODO: check that correct number of columns are returned */
+			after_year = c.getInt(1);
+			after_month = c.getInt(2);
+			after_day = c.getInt(3);
+		} else {
+			after_year = before_year;
+			after_month = before_month;
+			after_day = before_day;
+		}
+
 		update_date_label(R.id.before_date_button, before_year, before_month,
 				before_day);
 		update_date_label(R.id.after_date_button, after_year, after_month,
