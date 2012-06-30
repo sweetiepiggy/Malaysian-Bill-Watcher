@@ -31,7 +31,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-
+//import android.util.Log;
 
 public class DbAdapter
 {
@@ -46,6 +46,8 @@ public class DbAdapter
 	public static final String KEY_SUPPORTED_BY = "supported_by";
 	public static final String KEY_YEAR = "year";
 	public static final String KEY_NAME = "name";
+
+	private final String TAG = "DbAdapter";
 
 	private DatabaseHelper mDbHelper;
 
@@ -217,16 +219,34 @@ public class DbAdapter
 	}
 
 	/* TODO: how should the bills be sorted? */
-	public Cursor fetch_bills(String bill_name, String status)
+	public Cursor fetch_bills(String bill_name, String status,
+			int before_year, int before_month, int before_day,
+			int after_year, int after_month, int after_day)
 	{
+		String before_date = String.format("%04d-%02d-%02d 23:59", before_year,
+				before_month + 1, before_day);
+		String after_date = String.format("%04d-%02d-%02d 00:00", after_year,
+				after_month + 1, after_day);
+//		Log.i(TAG, "fetch_bills:[" +
+//				KEY_LONG_NAME + " LIKE " + bill_name  + " AND " +
+//					"(" + KEY_STATUS + " = " + status + " OR \"\" = " + status + ") AND " +
+//					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
+//					"strftime(\"%s\", " + before_date + ") AND " +
+//					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
+//					"strftime(\"%s\", " + after_date + ")" +
+//				" ORDER BY " + KEY_ROWID + " DESC]");
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				KEY_LONG_NAME + " LIKE ? AND " +
-					"(" + KEY_STATUS + " = ? OR \"\" = ?)",
-				new String[] {"%" + bill_name + "%", status, status},
+					"(" + KEY_STATUS + " = ? OR \"\" = ?) AND " +
+					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
+					"strftime(\"%s\", ?) AND " +
+					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
+					"strftime(\"%s\", ?)",
+				new String[] {"%" + bill_name + "%", status,
+					status, before_date, after_date},
 				null, null,
-//				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
-				KEY_ROWID + " DESC ", null);
+				KEY_ROWID + " DESC", null);
 	}
 
 	public Cursor fetch_bill(String long_name, String name)

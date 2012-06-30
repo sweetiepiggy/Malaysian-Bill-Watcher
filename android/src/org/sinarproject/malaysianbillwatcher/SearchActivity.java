@@ -43,12 +43,12 @@ public class SearchActivity extends Activity
 	private DbAdapter mDbHelper;
 	private String m_status = "";
 
-	private int before_year;
-	private int before_month;
-	private int before_day;
-	private int after_year;
-	private int after_month;
-	private int after_day;
+	private int m_before_year;
+	private int m_before_month;
+	private int m_before_day;
+	private int m_after_year;
+	private int m_after_month;
+	private int m_after_day;
 
 	static final int BEFORE_DATE_DIALOG_ID = 0;
 	static final int AFTER_DATE_DIALOG_ID = 1;
@@ -75,27 +75,27 @@ public class SearchActivity extends Activity
 		init_date_button(R.id.before_date_button, BEFORE_DATE_DIALOG_ID);
 
 		final Calendar cal = Calendar.getInstance();
-		before_year = cal.get(Calendar.YEAR);
-		before_month = cal.get(Calendar.MONTH);
-		before_day = cal.get(Calendar.DAY_OF_MONTH);
+		m_before_year = cal.get(Calendar.YEAR);
+		m_before_month = cal.get(Calendar.MONTH);
+		m_before_day = cal.get(Calendar.DAY_OF_MONTH);
 
 		Cursor c = mDbHelper.fetch_first_update();
 		startManagingCursor(c);
 		if (c.moveToFirst()) {
 			/* TODO: check that correct number of columns are returned */
-			after_year = c.getInt(1);
-			after_month = c.getInt(2);
-			after_day = c.getInt(3);
+			m_after_year = c.getInt(1);
+			m_after_month = c.getInt(2);
+			m_after_day = c.getInt(3);
 		} else {
-			after_year = before_year;
-			after_month = before_month;
-			after_day = before_day;
+			m_after_year = m_before_year;
+			m_after_month = m_before_month;
+			m_after_day = m_before_day;
 		}
 
-		update_date_label(R.id.before_date_button, before_year, before_month,
-				before_day);
-		update_date_label(R.id.after_date_button, after_year, after_month,
-				after_day);
+		update_date_label(R.id.before_date_button, m_before_year, m_before_month,
+				m_before_day);
+		update_date_label(R.id.after_date_button, m_after_year, m_after_month,
+				m_after_day);
 	}
 
 	private void init_date_button(int button_id, final int dialog_id)
@@ -155,6 +155,12 @@ public class SearchActivity extends Activity
 				Bundle b = new Bundle();
 				b.putString("bill_name", ((EditText) findViewById(R.id.bill_name_entry)).getText().toString());
 				b.putString("status", m_status);
+				b.putInt("before_year", m_before_year);
+				b.putInt("before_month", m_before_month);
+				b.putInt("before_day", m_before_day);
+				b.putInt("after_year", m_after_year);
+				b.putInt("after_month", m_after_month);
+				b.putInt("after_day", m_after_day);
 				intent.putExtras(b);
 				startActivity(intent);
 			}
@@ -168,34 +174,34 @@ public class SearchActivity extends Activity
 			new DatePickerDialog.OnDateSetListener() {
 				public void onDateSet(DatePicker view, int year,
 						int monthOfYear, int dayOfMonth) {
-					before_year = year;
-					before_month = monthOfYear;
-					before_day = dayOfMonth;
+					m_before_year = year;
+					m_before_month = monthOfYear;
+					m_before_day = dayOfMonth;
 					update_date_label(R.id.before_date_button,
-							before_year, before_month,
-							before_day);
+							m_before_year, m_before_month,
+							m_before_day);
 				}
 		};
 		DatePickerDialog.OnDateSetListener after_date_listener =
 			new DatePickerDialog.OnDateSetListener() {
 				public void onDateSet(DatePicker view, int year,
 						int monthOfYear, int dayOfMonth) {
-					after_year = year;
-					after_month = monthOfYear;
-					after_day = dayOfMonth;
+					m_after_year = year;
+					m_after_month = monthOfYear;
+					m_after_day = dayOfMonth;
 					update_date_label(R.id.after_date_button,
-							after_year, after_month,
-							after_day);
+							m_after_year, m_after_month,
+							m_after_day);
 				}
 		};
 
 		switch (id) {
 		case BEFORE_DATE_DIALOG_ID:
 			return new DatePickerDialog(this, before_date_listener,
-					before_year, before_month, before_day);
+					m_before_year, m_before_month, m_before_day);
 		case AFTER_DATE_DIALOG_ID:
 			return new DatePickerDialog(this, after_date_listener,
-					after_year, after_month, after_day);
+					m_after_year, m_after_month, m_after_day);
 		}
 		return null;
 	}

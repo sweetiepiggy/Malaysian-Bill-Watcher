@@ -33,7 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 public class SyncTask extends AsyncTask<Void, Void, Void>
@@ -110,7 +110,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			}
 			c.close();
 			dbHelper.close();
-			Log.i(TAG, "last_update:[" + last_update + "]");
+//			Log.i(TAG, "last_update:[" + last_update + "]");
 		}
 
 		@Override
@@ -131,13 +131,13 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			if (!done) {
 				if (local_name.equalsIgnoreCase("item")) {
 					/* TODO: should use strftime() first? */
-					Log.i(TAG, "last_update:[" + last_update + "]");
-					Log.i(TAG, "update_date:[" + update_date + "]");
+//					Log.i(TAG, "last_update:[" + last_update + "]");
+//					Log.i(TAG, "update_date:[" + update_date + "]");
 					if (last_update.compareTo(update_date) < 0) {
 						update_db();
 					} else {
 						done = true;
-						Log.i(TAG, "done updating");
+//						Log.i(TAG, "done updating");
 					}
 					in_item = false;
 					long_name = "";
@@ -261,16 +261,16 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		private void update_db()
 		{
 			++bill_cnt;
-			Log.i(TAG, "inserting new bill");
-			Log.i(TAG, "long_name:[" + long_name + "]");
-			Log.i(TAG, "year:[" + year + "]");
-			Log.i(TAG, "status:[" + status + "]");
-			Log.i(TAG, "url:[" + url + "]");
-			Log.i(TAG, "name:[" + name + "]");
-			Log.i(TAG, "read_by:[" + read_by + "]");
-			Log.i(TAG, "supported_by:[" + supported_by + "]");
-			Log.i(TAG, "date_presented:[" + date_presented + "]");
-			Log.i(TAG, "update_date:[" + update_date + "]");
+			//Log.i(TAG, "inserting new bill");
+			//Log.i(TAG, "long_name:[" + long_name + "]");
+			//Log.i(TAG, "year:[" + year + "]");
+			//Log.i(TAG, "status:[" + status + "]");
+			//Log.i(TAG, "url:[" + url + "]");
+			//Log.i(TAG, "name:[" + name + "]");
+			//Log.i(TAG, "read_by:[" + read_by + "]");
+			//Log.i(TAG, "supported_by:[" + supported_by + "]");
+			//Log.i(TAG, "date_presented:[" + date_presented + "]");
+			//Log.i(TAG, "update_date:[" + update_date + "]");
 
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(mCtx);

@@ -19,6 +19,7 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
+import java.util.Calendar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -42,16 +43,31 @@ public class BrowseActivity extends ListActivity {
 		String bill_name = (b == null) ? "" : b.getString("bill_name");
 		String status = (b == null) ? "" : b.getString("status");
 
+		final Calendar cal = Calendar.getInstance();
+		int before_year = (b == null) ? cal.get(Calendar.YEAR) : b.getInt("before_year");
+		int before_month = (b == null) ? cal.get(Calendar.MONTH) : b.getInt("before_month");
+		int before_day = (b == null) ? cal.get(Calendar.DAY_OF_MONTH) : b.getInt("before_day");
+		int after_year = (b == null) ? 1970 : b.getInt("after_year");
+		int after_month = (b == null) ? 0 : b.getInt("after_month");
+		int after_day = (b == null) ? 1 : b.getInt("after_day");
+
 		/* TODO: should adapter be closed? */
 		dbHelper.open(this);
 
-		fill_data(dbHelper, bill_name, status);
+		fill_data(dbHelper, bill_name, status, before_year,
+				before_month, before_day, after_year,
+				after_month, after_day);
 		init_click();
 	}
 
-	private void fill_data(DbAdapter dbHelper, String bill_name, String status)
+	private void fill_data(DbAdapter dbHelper, String bill_name,
+			String status, int before_year, int before_month,
+			int before_day, int after_year, int after_month,
+			int after_day)
 	{
-		Cursor c = dbHelper.fetch_bills(bill_name, status);
+		Cursor c = dbHelper.fetch_bills(bill_name, status, before_year,
+				before_month, before_day, after_year,
+				after_month, after_day);
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
 				android.R.layout.two_line_list_item,
