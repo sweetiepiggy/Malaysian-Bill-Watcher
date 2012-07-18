@@ -31,7 +31,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-//import android.util.Log;
+import android.util.Log;
 
 public class DbAdapter
 {
@@ -46,87 +46,70 @@ public class DbAdapter
 	public static final String KEY_SUPPORTED_BY = "supported_by";
 	public static final String KEY_YEAR = "year";
 	public static final String KEY_NAME = "name";
+	public static final String KEY_READ = "read";
 
-	private final String TAG = "DbAdapter";
+	private static final String TAG = "DbAdapter";
 
 	private DatabaseHelper mDbHelper;
 
-	private static final String DATABASE_PATH = "/data/data/org.sinarproject.malaysianbillwatcher/databases/";
 	private static final String DATABASE_NAME = "data.db";
 	private static final String DATABASE_TABLE = "data";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
+
+	private static final String DATABASE_CREATE =
+		"CREATE TABLE " + DATABASE_TABLE + " (" +
+		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		KEY_NAME + " TEXT, " +
+		KEY_LONG_NAME + " TEXT, " +
+
+		KEY_URL + " TEXT, " +
+		KEY_STATUS + " TEXT, " +
+		KEY_YEAR + " TEXT, " +
+		KEY_READ_BY + " TEXT, " +
+		KEY_SUPPORTED_BY + " TEXT, " +
+		KEY_DATE_PRESENTED + " TEXT, " +
+		KEY_CREATE_DATE + " TEXT, " +
+		KEY_UPDATE_DATE + " TEXT," +
+		KEY_READ + " INTEGER DEFAULT 0);";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
-		private final Context mCtx;
 		public SQLiteDatabase mDb;
 
 		DatabaseHelper(Context context)
 		{
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			mCtx = context;
+			Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
+			db.execSQL(DATABASE_CREATE);
 		}
 
-		public void create_database() throws IOException
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int old_ver, int new_ver)
 		{
-			if (!database_exists()) {
-				this.getReadableDatabase();
-				try {
-					copy_database();
-				} catch (IOException e) {
-					throw new Error(e);
-				}
+			Log.i(TAG, "upgrading database from " + old_ver +
+					" to " + new_ver);
+			if (old_ver <= 1) {
+				Log.i(TAG, "adding read column");
+				db.execSQL("ALTER TABLE " + DATABASE_TABLE +
+						" ADD COLUMN " + KEY_READ +
+						" INTEGER DEFAULT 0");
 			}
-		}
-
-		private boolean database_exists()
-		{
-			SQLiteDatabase db = null;
-			try {
-				String out_filename = DATABASE_PATH + DATABASE_NAME;
-				db = SQLiteDatabase.openDatabase(out_filename, null, SQLiteDatabase.OPEN_READONLY);
-			} catch (SQLiteException e) {
-				/* database does not exist yet */
-			}
-			if (db != null) {
-				db.close();
-			}
-			return db != null;
-		}
-
-		private void copy_database() throws IOException
-		{
-			InputStream input = mCtx.getAssets().open(DATABASE_NAME);
-
-			String full_path = DATABASE_PATH + DATABASE_NAME;
-
-			OutputStream output = new FileOutputStream(full_path);
-
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = input.read(buffer))>0){
-				output.write(buffer, 0, length);
-			}
-
-			output.flush();
-			output.close();
-			input.close();
+//			Log.w(TAG, "upgrading database from " + old_ver +
+//					" to " + new_ver + ", which will " +
+//					"destroy all old data");
+//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
+//			onCreate(db);
 		}
 
 		public void open_database(int perm) throws SQLException
 		{
-			String full_path = DATABASE_PATH + DATABASE_NAME;
-			mDb = SQLiteDatabase.openDatabase(full_path, null, perm);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-		{
+			mDb = (perm == SQLiteDatabase.OPEN_READWRITE) ?
+				getWritableDatabase() : getReadableDatabase();
 		}
 
 		@Override
@@ -155,14 +138,9 @@ public class DbAdapter
 
 	private DbAdapter open(Context ctx, int perm) throws SQLException
 	{
+		Log.i(TAG, "new DatabaseHelper(ctx)");
 		mDbHelper = new DatabaseHelper(ctx);
-
-		try {
-			mDbHelper.create_database();
-		} catch (IOException e) {
-			throw new Error(e);
-		}
-
+		Log.i(TAG, "opening database with permission " + perm);
 		mDbHelper.open_database(perm);
 
 		return this;
@@ -210,6 +188,7 @@ public class DbAdapter
 	}
 
 	/* TODO: how should the bills be sorted? */
+	/* TODO: don't call strftime() when sorting */
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
