@@ -187,17 +187,14 @@ public class DbAdapter
 		return ret;
 	}
 
-	/* TODO: how should the bills be sorted? */
-	/* TODO: don't call strftime() when sorting */
 	public Cursor fetch_bills()
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
-				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
+				KEY_UPDATE_DATE + " DESC ", null);
 	}
 
-	/* TODO: how should the bills be sorted? */
 	public Cursor fetch_bills(String bill_name, String status,
 			int before_year, int before_month, int before_day,
 			int after_year, int after_month, int after_day)
@@ -215,7 +212,7 @@ public class DbAdapter
 //					"strftime(\"%s\", " + after_date + ")" +
 //				" ORDER BY " + KEY_ROWID + " DESC]");
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
+				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS, KEY_READ},
 				KEY_LONG_NAME + " LIKE ? AND " +
 					"(" + KEY_STATUS + " = ? OR \"\" = ?) AND " +
 					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
@@ -225,7 +222,7 @@ public class DbAdapter
 				new String[] {"%" + bill_name + "%", status,
 					status, before_date, after_date},
 				null, null,
-				KEY_ROWID + " DESC", null);
+				KEY_UPDATE_DATE + " DESC", null);
 	}
 
 	public Cursor fetch_bill(String long_name, String name)
@@ -244,7 +241,7 @@ public class DbAdapter
 				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR, KEY_NAME},
 				KEY_LONG_NAME + " = ?", new String[] {long_name},
 				null, null,
-				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC ", null);
+				KEY_UPDATE_DATE + " DESC ", null);
 	}
 
 	public Cursor fetch_bill(long id)
@@ -260,7 +257,7 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_UPDATE_DATE},
 				null, null, null, null,
-				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") DESC LIMIT 1", null);
+				KEY_UPDATE_DATE + " DESC LIMIT 1", null);
 	}
 
 	public Cursor fetch_first_update()
@@ -272,7 +269,7 @@ public class DbAdapter
 					"strftime(\"%d\", " + KEY_UPDATE_DATE + ")",
 				},
 				null, null, null, null,
-				"strftime(\"%s\", " + KEY_UPDATE_DATE + ") ASC LIMIT 1", null);
+				KEY_UPDATE_DATE + " ASC LIMIT 1", null);
 	}
 
 	public Cursor fetch_status()
