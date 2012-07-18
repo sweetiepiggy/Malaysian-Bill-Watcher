@@ -238,7 +238,9 @@ public class DbAdapter
 	public Cursor fetch_revs(String long_name)
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR, KEY_NAME},
+				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR,
+					KEY_NAME, KEY_DATE_PRESENTED,
+					KEY_READ_BY, KEY_SUPPORTED_BY},
 				KEY_LONG_NAME + " = ?", new String[] {long_name},
 				null, null,
 				KEY_UPDATE_DATE + " DESC ", null);

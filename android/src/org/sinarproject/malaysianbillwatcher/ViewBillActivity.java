@@ -57,26 +57,38 @@ public class ViewBillActivity extends Activity {
 			Cursor c_rev = dbHelper.fetch_revs(long_name);
 			startManagingCursor(c_rev);
 			if (c_rev.moveToFirst()) do {
-				String code = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_NAME));
-				String rev = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_YEAR));
+				String name = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_NAME));
+				String year = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_YEAR));
 				String status = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_STATUS));
+				String date_presented = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_DATE_PRESENTED));
+				String read_by = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_READ_BY));
+				String supported_by = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
 				String url = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_URL));
 
-				print_rev(code, rev, status, url);
+				print_rev(name, year, status, date_presented,
+						read_by, supported_by, url);
 			} while (c_rev.moveToNext());
 		}
 	}
 
-	private void print_rev(String code, String rev, String status, final String url)
+	private void print_rev(String name, String year, String status,
+			String date_presented, String read_by,
+			String supported_by, final String url)
 	{
-		TextView code_view = new TextView(getApplicationContext());
-		TextView rev_view = new TextView(getApplicationContext());
+		TextView name_view = new TextView(getApplicationContext());
+		TextView year_view = new TextView(getApplicationContext());
 		TextView status_view = new TextView(getApplicationContext());
+		TextView date_presented_view = new TextView(getApplicationContext());
+		TextView read_by_view = new TextView(getApplicationContext());
+		TextView supported_by_view = new TextView(getApplicationContext());
 		Button view_bill_button = new Button(getApplicationContext());
 
-		code_view.setText(code);
-		rev_view.setText(rev);
+		name_view.setText(name);
+		year_view.setText(year);
 		status_view.setText(status);
+		date_presented_view.setText(date_presented);
+		read_by_view.setText(read_by);
+		supported_by_view.setText(supported_by);
 		view_bill_button.setText(getResources().getString(R.string.view_bill));
 
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +99,12 @@ public class ViewBillActivity extends Activity {
 		});
 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
-		layout.addView(code_view);
-		layout.addView(rev_view);
+		layout.addView(name_view);
+		layout.addView(year_view);
 		layout.addView(status_view);
+		layout.addView(date_presented_view);
+		layout.addView(read_by_view);
+		layout.addView(supported_by_view);
 		layout.addView(view_bill_button);
 	}
 
