@@ -85,6 +85,7 @@ public class DbAdapter
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
+			Log.i(TAG, "creating database");
 			db.execSQL(DATABASE_CREATE);
 		}
 
@@ -98,12 +99,11 @@ public class DbAdapter
 				db.execSQL("ALTER TABLE " + DATABASE_TABLE +
 						" ADD COLUMN " + KEY_READ +
 						" INTEGER DEFAULT 0");
+			} else {
+				Log.w(TAG, "destroying all old data");
+				db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
+				onCreate(db);
 			}
-//			Log.w(TAG, "upgrading database from " + old_ver +
-//					" to " + new_ver + ", which will " +
-//					"destroy all old data");
-//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-//			onCreate(db);
 		}
 
 		public void open_database(int perm) throws SQLException
