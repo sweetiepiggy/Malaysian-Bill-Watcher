@@ -20,6 +20,7 @@
 package org.sinarproject.malaysianbillwatcher;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -32,46 +33,48 @@ import android.widget.SimpleCursorAdapter;
 
 public class BrowseActivity extends ListActivity {
 
-	public class date {
-		public int year;
-		public int month;
-		public int day;
-	}
-
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		DbAdapter dbHelper = new DbAdapter();
-
 		Bundle b = getIntent().getExtras();
 		String bill_name = (b == null) ? "" : b.getString("bill_name");
 		String status = (b == null) ? "" : b.getString("status");
 
-		final Calendar cal = Calendar.getInstance();
-		date before_date = new date();
-		date after_date = new date();
-		before_date.year = (b == null) ? cal.get(Calendar.YEAR) : b.getInt("before_year");
-		before_date.month = (b == null) ? cal.get(Calendar.MONTH) : b.getInt("before_month");
-		before_date.day = (b == null) ? cal.get(Calendar.DAY_OF_MONTH) : b.getInt("before_day");
-		after_date.year = (b == null) ? 1970 : b.getInt("after_year");
-		after_date.month = (b == null) ? 0 : b.getInt("after_month");
-		after_date.day = (b == null) ? 1 : b.getInt("after_day");
+		final Calendar now = Calendar.getInstance();
+		Calendar after_date = new GregorianCalendar();
+		Calendar before_date = new GregorianCalendar();
+		if (b == null) {
+			after_date.set(1970, 0, 1, 0, 0);
+			before_date.set(now.get(Calendar.YEAR),
+					now.get(Calendar.MONTH),
+					now.get(Calendar.DAY_OF_MONTH),
+					23, 59);
+		} else {
+			after_date.set(b.getInt("after_year"),
+					b.getInt("after_month"),
+					b.getInt("after_year"),
+					0, 0);
+			before_date.set(b.getInt("before_year"),
+					b.getInt("before_month"),
+					b.getInt("before_year"),
+					23, 59);
+		}
 
-		/* TODO: should adapter be closed? */
-		dbHelper.open(this);
-
-		fill_data(dbHelper, bill_name, status, before_date, after_date);
+		fill_data(bill_name, status, after_date, before_date);
 		init_click();
 	}
 
-	private void fill_data(DbAdapter dbHelper, String bill_name,
-			String status, date before_date, date after_date)
+	private void fill_data(String bill_name, String status,
+			Calendar after_date, Calendar before_date)
 	{
-		Cursor c = dbHelper.fetch_bills(bill_name, status, before_date.year,
-				before_date.month, before_date.day, after_date.year,
-				after_date.month, after_date.day);
+		/* TODO: should adapter be closed? */
+		DbAdapter dbHelper = new DbAdapter();
+		dbHelper.open(this);
+
+		Cursor c = dbHelper.fetch_bills(bill_name, status, after_date,
+				before_date);
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
 				android.R.layout.two_line_list_item,
@@ -86,7 +89,8 @@ public class BrowseActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int pos, long id) {
-				Intent intent = new Intent(getApplicationContext(), ViewBillActivity.class);
+				Intent intent = new Intent(getApplicationContext(),
+					ViewBillActivity.class);
 				Bundle b = new Bundle();
 				b.putLong("row_id", id);
 				intent.putExtras(b);

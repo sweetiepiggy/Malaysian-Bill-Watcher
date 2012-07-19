@@ -19,17 +19,14 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -196,13 +193,12 @@ public class DbAdapter
 	}
 
 	public Cursor fetch_bills(String bill_name, String status,
-			int before_year, int before_month, int before_day,
-			int after_year, int after_month, int after_day)
+			Calendar after_date, Calendar before_date)
 	{
-		String before_date = String.format("%04d-%02d-%02d 23:59", before_year,
-				before_month + 1, before_day);
-		String after_date = String.format("%04d-%02d-%02d 00:00", after_year,
-				after_month + 1, after_day);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String before = df.format(before_date.getTime());
+		String after = df.format(after_date.getTime());
+
 //		Log.i(TAG, "fetch_bills:[" +
 //				KEY_LONG_NAME + " LIKE " + bill_name  + " AND " +
 //					"(" + KEY_STATUS + " = " + status + " OR \"\" = " + status + ") AND " +
@@ -220,7 +216,7 @@ public class DbAdapter
 					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
 					"strftime(\"%s\", ?)",
 				new String[] {"%" + bill_name + "%", status,
-					status, before_date, after_date},
+					status, before, after},
 				null, null,
 				KEY_UPDATE_DATE + " DESC", null);
 	}

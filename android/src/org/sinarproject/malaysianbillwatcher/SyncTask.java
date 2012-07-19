@@ -39,7 +39,10 @@ import android.widget.Toast;
 public class SyncTask extends AsyncTask<Void, Void, Void>
 {
 	private final String TAG = "AsyncTask";
+
+	/* TODO: move to Constants.java */
 	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
+
 	private Context mCtx;
 	private int bill_cnt = 0;
 
