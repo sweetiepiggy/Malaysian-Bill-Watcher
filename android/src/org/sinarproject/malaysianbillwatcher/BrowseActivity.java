@@ -32,6 +32,12 @@ import android.widget.SimpleCursorAdapter;
 
 public class BrowseActivity extends ListActivity {
 
+	public class date {
+		public int year;
+		public int month;
+		public int day;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,30 +50,28 @@ public class BrowseActivity extends ListActivity {
 		String status = (b == null) ? "" : b.getString("status");
 
 		final Calendar cal = Calendar.getInstance();
-		int before_year = (b == null) ? cal.get(Calendar.YEAR) : b.getInt("before_year");
-		int before_month = (b == null) ? cal.get(Calendar.MONTH) : b.getInt("before_month");
-		int before_day = (b == null) ? cal.get(Calendar.DAY_OF_MONTH) : b.getInt("before_day");
-		int after_year = (b == null) ? 1970 : b.getInt("after_year");
-		int after_month = (b == null) ? 0 : b.getInt("after_month");
-		int after_day = (b == null) ? 1 : b.getInt("after_day");
+		date before_date = new date();
+		date after_date = new date();
+		before_date.year = (b == null) ? cal.get(Calendar.YEAR) : b.getInt("before_year");
+		before_date.month = (b == null) ? cal.get(Calendar.MONTH) : b.getInt("before_month");
+		before_date.day = (b == null) ? cal.get(Calendar.DAY_OF_MONTH) : b.getInt("before_day");
+		after_date.year = (b == null) ? 1970 : b.getInt("after_year");
+		after_date.month = (b == null) ? 0 : b.getInt("after_month");
+		after_date.day = (b == null) ? 1 : b.getInt("after_day");
 
 		/* TODO: should adapter be closed? */
 		dbHelper.open(this);
 
-		fill_data(dbHelper, bill_name, status, before_year,
-				before_month, before_day, after_year,
-				after_month, after_day);
+		fill_data(dbHelper, bill_name, status, before_date, after_date);
 		init_click();
 	}
 
 	private void fill_data(DbAdapter dbHelper, String bill_name,
-			String status, int before_year, int before_month,
-			int before_day, int after_year, int after_month,
-			int after_day)
+			String status, date before_date, date after_date)
 	{
-		Cursor c = dbHelper.fetch_bills(bill_name, status, before_year,
-				before_month, before_day, after_year,
-				after_month, after_day);
+		Cursor c = dbHelper.fetch_bills(bill_name, status, before_date.year,
+				before_date.month, before_date.day, after_date.year,
+				after_date.month, after_date.day);
 		startManagingCursor(c);
 		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
 				android.R.layout.two_line_list_item,
