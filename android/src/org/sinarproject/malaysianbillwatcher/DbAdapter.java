@@ -217,18 +217,16 @@ public class DbAdapter
 //				KEY_LONG_NAME + " LIKE " + bill_name  + " AND " +
 //					"(" + KEY_STATUS + " = " + status + " OR \"\" = " + status + ") AND " +
 //					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
-//					"strftime(\"%s\", " + before_date + ") AND " +
+//					"strftime(\"%s\", " + before + ") AND " +
 //					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
-//					"strftime(\"%s\", " + after_date + ")" +
-//				" ORDER BY " + KEY_ROWID + " DESC]");
+//					"strftime(\"%s\", " + after + ")" +
+//				" ORDER BY " + KEY_UPDATE_DATE + " DESC]");
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS, KEY_READ},
 				KEY_LONG_NAME + " LIKE ? AND " +
 					"(" + KEY_STATUS + " = ? OR \"\" = ?) AND " +
-					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
-					"strftime(\"%s\", ?) AND " +
-					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
-					"strftime(\"%s\", ?)",
+					KEY_UPDATE_DATE + " < " + "? AND " +
+					KEY_UPDATE_DATE + " > " + "?",
 				new String[] {"%" + bill_name + "%", status,
 					status, before, after},
 				null, null,
