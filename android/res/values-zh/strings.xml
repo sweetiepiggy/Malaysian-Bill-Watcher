@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Copyright (C) 2012 Sinar Project
+
+    This file is part of Malaysian Bill Watcher.
+
+    Malaysian Bill Watcher is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    Malaysian Bill Watcher is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Malaysian Bill Watcher ; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+-->
+
+<resources>
+	<string name="app_name">马来西亚法案搜索器</string>
+	<string name="view_bill">查看PDF</string>
+	<string name="browse_bills">浏览法案</string>
+	<string name="search_bills">搜索法案</string>
+	<string name="sync">同步</string>
+	<string name="syncing">同步中...</string>
+	<string name="about">关于</string>
+	<string name="updates_found">更新发现</string>
+	<string name="bill_name">条例草案的名称</string>
+	<string name="bill_name_hint">条例草案的名称搜索</string>
+	<string name="status">状态</string>
+	<string name="search">搜索</string>
+	<string name="last_between">距离最后更新</string>
+	<string name="gpl">
+版權所有(C) 2012 Sinar Project info@sinarproject.com\n\n
+
+爲自由軟體；您可依據自由軟體基金會所發表的GNU通用公共授權條款，對本程式再次發佈和/或修改；無論您依據的是本授權的第三版，或（您可選的）任一日後發行的版本。\n\n
+
+马来西亚法案搜索器是基於使用目的而加以發佈，然而不負任何擔保責任；亦無對適售性或特定目的適用性所爲的默示性擔保。詳情請參照GNU通用公共授權。\n\n
+
+您應已收到附隨於马来西亚法案搜索器的GNU通用公共授權的副本；如果沒有，請參照http://www.gnu.org/licenses/ 。\n\n
+	</string>
+</resources>
+
