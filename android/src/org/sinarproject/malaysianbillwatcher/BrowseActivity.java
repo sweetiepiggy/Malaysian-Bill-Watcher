@@ -78,11 +78,11 @@ public class BrowseActivity extends ListActivity {
 		} else {
 			after_date.set(b.getInt("after_year"),
 					b.getInt("after_month"),
-					b.getInt("after_year"),
+					b.getInt("after_day"),
 					0, 0);
 			before_date.set(b.getInt("before_year"),
 					b.getInt("before_month"),
-					b.getInt("before_year"),
+					b.getInt("before_day"),
 					23, 59);
 		}
 
