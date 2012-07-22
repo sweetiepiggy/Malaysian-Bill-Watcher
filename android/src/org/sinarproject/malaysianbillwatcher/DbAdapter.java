@@ -29,6 +29,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DbAdapter
 {
@@ -72,10 +73,12 @@ public class DbAdapter
 	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
 		public SQLiteDatabase mDb;
+		Context mContext;
 
 		DatabaseHelper(Context context)
 		{
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			mContext = context;
 			Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
 		}
 
@@ -83,7 +86,12 @@ public class DbAdapter
 		public void onCreate(SQLiteDatabase db)
 		{
 			Log.i(TAG, "creating database");
+			Log.w(TAG, "destroying all old data");
+			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 			db.execSQL(DATABASE_CREATE);
+			SyncTask sync = new SyncTask(mContext);
+			sync.execute();
+			Toast.makeText(mContext, R.string.syncing, Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
@@ -97,8 +105,6 @@ public class DbAdapter
 						" ADD COLUMN " + KEY_READ +
 						" INTEGER DEFAULT 0");
 			} else {
-				Log.w(TAG, "destroying all old data");
-				db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 				onCreate(db);
 			}
 		}
