@@ -61,12 +61,19 @@ public class SearchActivity extends Activity
 		setContentView(R.layout.search);
 
 		mDbHelper = new DbAdapter();
-		/* TODO: close() */
 		mDbHelper.open(this);
 
 		init_date_buttons();
 		init_status_spinner();
 		init_search_button();
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (mDbHelper != null) {
+			mDbHelper.close();
+		}
+		super.onDestroy();
 	}
 
 	private void init_date_buttons()

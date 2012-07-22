@@ -36,6 +36,8 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
+	DbAdapter mDbHelper;
+
 	private class BrowseBillListAdapter extends ResourceCursorAdapter {
 		public BrowseBillListAdapter(Context context, Cursor c) {
 			super(context, android.R.layout.two_line_list_item, c);
@@ -86,18 +88,25 @@ public class BrowseActivity extends ListActivity {
 					23, 59);
 		}
 
+		mDbHelper = new DbAdapter();
+		mDbHelper.open(this);
+
 		fill_data(bill_name, status, after_date, before_date);
 		init_click();
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (mDbHelper != null) {
+			mDbHelper.close();
+		}
+		super.onDestroy();
 	}
 
 	private void fill_data(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{
-		/* TODO: should adapter be closed? */
-		DbAdapter dbHelper = new DbAdapter();
-		dbHelper.open(this);
-
-		Cursor c = dbHelper.fetch_bills(bill_name, status, after_date,
+		Cursor c = mDbHelper.fetch_bills(bill_name, status, after_date,
 				before_date);
 		startManagingCursor(c);
 		BrowseBillListAdapter bills = new BrowseBillListAdapter(this, c);

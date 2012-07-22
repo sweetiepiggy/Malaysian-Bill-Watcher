@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
 	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
+	DbAdapter mDbHelper;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -44,21 +45,20 @@ public class ViewBillActivity extends Activity {
 		}
 		Long row_id = b.getLong("row_id");
 
-		DbAdapter dbHelper = new DbAdapter();
-		dbHelper.open_readwrite(this);
-		dbHelper.set_read(row_id, true);
-		dbHelper.close();
+		mDbHelper = new DbAdapter();
+		mDbHelper.open_readwrite(this);
+		mDbHelper.set_read(row_id, true);
+		mDbHelper.close();
 
-		/* TODO: should adapter be closed? */
-		dbHelper.open(this);
+		mDbHelper.open(this);
 
-		Cursor c = dbHelper.fetch_bill(row_id);
+		Cursor c = mDbHelper.fetch_bill(row_id);
 		startManagingCursor(c);
 		if (c.moveToFirst()) {
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
 			((TextView) findViewById(R.id.long_name)).setText(long_name);
 
-			Cursor c_rev = dbHelper.fetch_revs(long_name);
+			Cursor c_rev = mDbHelper.fetch_revs(long_name);
 			startManagingCursor(c_rev);
 			if (c_rev.moveToFirst()) do {
 				String name = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_NAME));
@@ -73,6 +73,14 @@ public class ViewBillActivity extends Activity {
 						read_by, supported_by, url);
 			} while (c_rev.moveToNext());
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (mDbHelper != null) {
+			mDbHelper.close();
+		}
+		super.onDestroy();
 	}
 
 	private void print_rev(String name, String year, String status,
