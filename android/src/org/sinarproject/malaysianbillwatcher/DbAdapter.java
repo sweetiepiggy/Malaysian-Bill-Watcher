@@ -28,7 +28,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 public class DbAdapter
@@ -79,14 +79,14 @@ public class DbAdapter
 		{
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 			mContext = context;
-			Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
+			//Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
-			Log.i(TAG, "creating database");
-			Log.w(TAG, "destroying all old data");
+			//Log.i(TAG, "creating database");
+			//Log.w(TAG, "destroying all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 			db.execSQL(DATABASE_CREATE);
 			SyncTask sync = new SyncTask(mContext);
@@ -97,10 +97,10 @@ public class DbAdapter
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int old_ver, int new_ver)
 		{
-			Log.i(TAG, "upgrading database from " + old_ver +
-					" to " + new_ver);
+			//Log.i(TAG, "upgrading database from " + old_ver +
+					//" to " + new_ver);
 			if (old_ver <= 1) {
-				Log.i(TAG, "adding read column");
+				//Log.i(TAG, "adding read column");
 				db.execSQL("ALTER TABLE " + DATABASE_TABLE +
 						" ADD COLUMN " + KEY_READ +
 						" INTEGER DEFAULT 0");
@@ -141,9 +141,9 @@ public class DbAdapter
 
 	private DbAdapter open(Context ctx, int perm) throws SQLException
 	{
-		Log.i(TAG, "new DatabaseHelper(ctx)");
+		//Log.i(TAG, "new DatabaseHelper(ctx)");
 		mDbHelper = new DatabaseHelper(ctx);
-		Log.i(TAG, "opening database with permission " + perm);
+		//Log.i(TAG, "opening database with permission " + perm);
 		mDbHelper.open_database(perm);
 
 		return this;
