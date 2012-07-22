@@ -45,6 +45,10 @@ public class ViewBillActivity extends Activity {
 		Long row_id = b.getLong("row_id");
 
 		DbAdapter dbHelper = new DbAdapter();
+		dbHelper.open_readwrite(this);
+		dbHelper.set_read(row_id, true);
+		dbHelper.close();
+
 		/* TODO: should adapter be closed? */
 		dbHelper.open(this);
 

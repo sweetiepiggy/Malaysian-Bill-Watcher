@@ -166,6 +166,7 @@ public class DbAdapter
 		initial_values.put(KEY_SUPPORTED_BY, supported_by);
 		initial_values.put(KEY_DATE_PRESENTED, date_presented);
 		initial_values.put(KEY_UPDATE_DATE, update_date);
+		initial_values.put(KEY_READ, 0);
 
 		Cursor c = fetch_bill(long_name, name);
 		/* bill already exists, just update it */
@@ -182,6 +183,19 @@ public class DbAdapter
 		}
 
 		return ret;
+	}
+
+	/** @return true on success, false on failure */
+	public boolean set_read(long row_id, boolean read)
+	{
+		ContentValues values = new ContentValues();
+		values.put(KEY_READ, read ? 1 : 0);
+
+		int rows_affected = mDbHelper.mDb.update(DATABASE_TABLE, values,
+			KEY_ROWID + " = ?",
+			new String[] {Long.toString(row_id)});
+
+		return rows_affected == 1;
 	}
 
 	public Cursor fetch_bills()

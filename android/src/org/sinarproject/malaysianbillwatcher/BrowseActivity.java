@@ -21,17 +21,41 @@ package org.sinarproject.malaysianbillwatcher;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.ResourceCursorAdapter;
+import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
+	private class BrowseBillListAdapter extends ResourceCursorAdapter {
+		public BrowseBillListAdapter(Context context, Cursor c) {
+			super(context, android.R.layout.two_line_list_item, c);
+		}
+
+		@Override
+		public void bindView(View view, Context context, Cursor c) {
+			TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
+			String status = c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS));
+			int read = c.getInt(c.getColumnIndex(DbAdapter.KEY_READ));
+
+			text1.setText(long_name);
+			text2.setText(status);
+
+			text1.setTypeface(null, read == 1 ? Typeface.NORMAL : Typeface.BOLD);
+		}
+	}
 
 	/** Called when the activity is first created. */
 	@Override
@@ -76,10 +100,7 @@ public class BrowseActivity extends ListActivity {
 		Cursor c = dbHelper.fetch_bills(bill_name, status, after_date,
 				before_date);
 		startManagingCursor(c);
-		SimpleCursorAdapter bills = new SimpleCursorAdapter(this,
-				android.R.layout.two_line_list_item,
-				c, new String[] {DbAdapter.KEY_LONG_NAME, DbAdapter.KEY_STATUS},
-				new int[] {android.R.id.text1, android.R.id.text2});
+		BrowseBillListAdapter bills = new BrowseBillListAdapter(this, c);
 		setListAdapter(bills);
 	}
 
