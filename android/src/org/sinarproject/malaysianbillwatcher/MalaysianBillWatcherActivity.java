@@ -64,6 +64,11 @@ public class MalaysianBillWatcherActivity extends Activity {
 				Toast.makeText(getApplicationContext(), R.string.syncing, Toast.LENGTH_SHORT).show();
 			}
 		});
+
+		/* open database only to sync if it has not been created yet */
+		DbAdapter dbHelper = new DbAdapter();
+		dbHelper.open(getApplicationContext());
+		dbHelper.close();
 	}
 
 	@Override
