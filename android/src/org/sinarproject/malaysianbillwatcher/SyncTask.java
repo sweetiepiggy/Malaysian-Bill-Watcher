@@ -106,7 +106,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 		public void startDocument()
 		{
 			DbAdapter dbHelper = new DbAdapter();
-			dbHelper.open(mCtx);
+			dbHelper.open_no_sync(mCtx);
 			Cursor c = dbHelper.fetch_last_update();
 			if (c.moveToFirst()) {
 				last_update = c.getString(c.getColumnIndex(DbAdapter.KEY_UPDATE_DATE));

@@ -72,13 +72,15 @@ public class DbAdapter
 
 	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
+		private final Context mCtx;
+		private boolean mAllowSync;
 		public SQLiteDatabase mDb;
-		Context mContext;
 
-		DatabaseHelper(Context context)
+		DatabaseHelper(Context context, boolean allow_sync)
 		{
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			mContext = context;
+			mCtx = context;
+			mAllowSync = allow_sync;
 			//Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
 		}
 
@@ -89,9 +91,11 @@ public class DbAdapter
 			//Log.w(TAG, "destroying all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 			db.execSQL(DATABASE_CREATE);
-			SyncTask sync = new SyncTask(mContext);
-			sync.execute();
-			Toast.makeText(mContext, R.string.syncing, Toast.LENGTH_SHORT).show();
+			if (mAllowSync) {
+				SyncTask sync = new SyncTask(mCtx);
+				sync.execute();
+				Toast.makeText(mCtx, R.string.syncing, Toast.LENGTH_SHORT).show();
+			}
 		}
 
 		@Override
@@ -131,18 +135,23 @@ public class DbAdapter
 
 	public DbAdapter open(Context ctx) throws SQLException
 	{
-		return open(ctx, SQLiteDatabase.OPEN_READONLY);
+		return open(ctx, SQLiteDatabase.OPEN_READONLY, true);
+	}
+
+	public DbAdapter open_no_sync(Context ctx) throws SQLException
+	{
+		return open(ctx, SQLiteDatabase.OPEN_READONLY, false);
 	}
 
 	public DbAdapter open_readwrite(Context ctx) throws SQLException
 	{
-		return open(ctx, SQLiteDatabase.OPEN_READWRITE);
+		return open(ctx, SQLiteDatabase.OPEN_READWRITE, true);
 	}
 
-	private DbAdapter open(Context ctx, int perm) throws SQLException
+	private DbAdapter open(Context ctx, int perm, boolean allow_sync) throws SQLException
 	{
 		//Log.i(TAG, "new DatabaseHelper(ctx)");
-		mDbHelper = new DatabaseHelper(ctx);
+		mDbHelper = new DatabaseHelper(ctx, allow_sync);
 		//Log.i(TAG, "opening database with permission " + perm);
 		mDbHelper.open_database(perm);
 
