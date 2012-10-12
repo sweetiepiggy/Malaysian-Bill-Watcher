@@ -21,6 +21,7 @@ package org.sinarproject.malaysianbillwatcher;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class MalaysianBillWatcherActivity extends Activity {
+	private static final String SOURCE_URL = "https://github.com/sweetiepiggy/Malaysian-Bill-Watcher/tree/sp";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -84,6 +86,11 @@ public class MalaysianBillWatcherActivity extends Activity {
 		case R.id.about:
 			Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
 			startActivity(intent);
+			return true;
+		case R.id.source:
+			Intent source_intent = new Intent(Intent.ACTION_VIEW);
+			source_intent.setDataAndType(Uri.parse(SOURCE_URL), "text/html");
+			startActivity(Intent.createChooser(source_intent, getResources().getString(R.string.open_browser)));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

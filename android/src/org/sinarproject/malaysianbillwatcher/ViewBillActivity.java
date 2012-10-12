@@ -124,7 +124,7 @@ public class ViewBillActivity extends Activity {
 	{
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + uri_str), "text/html");
-		startActivity(Intent.createChooser(intent, "Open Web Browser"));
+		startActivity(Intent.createChooser(intent, getResources().getString(R.string.open_browser)));
 	}
 }
 

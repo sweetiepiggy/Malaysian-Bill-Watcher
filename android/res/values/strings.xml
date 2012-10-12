@@ -34,6 +34,8 @@
 	<string name="status">Status</string>
 	<string name="search">search</string>
 	<string name="last_between">Last Update Between</string>
+	<string name="view_source">View Source</string>
+	<string name="open_browser">Open Web Browser</string>
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project info@sinarproject.com\n\n
 Malaysian Bill Watcher is free software; you can redistribute it and/or modify
