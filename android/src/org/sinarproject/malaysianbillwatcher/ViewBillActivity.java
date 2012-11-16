@@ -131,8 +131,8 @@ public class ViewBillActivity extends Activity {
 		year_view.setText(year);
 		status_view.setText(status);
 		date_presented_view.setText(date_presented);
-		read_by_view.setText(read_by);
-		supported_by_view.setText(supported_by);
+		read_by_view.setText(read_by.replaceAll(", ", "\n"));
+		supported_by_view.setText(supported_by.replaceAll(", ", "\n"));
 		link_view.setText(url);
 		view_bill_button.setText(getResources().getString(R.string.view_bill));
 
