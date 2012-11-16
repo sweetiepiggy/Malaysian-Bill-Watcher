@@ -26,12 +26,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
 	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
 	DbAdapter mDbHelper;
+	Long mRowId;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -43,16 +47,18 @@ public class ViewBillActivity extends Activity {
 		if (b == null) {
 			b = new Bundle();
 		}
-		Long row_id = b.getLong("row_id");
+		mRowId = b.getLong("row_id");
 
 		mDbHelper = new DbAdapter();
 		mDbHelper.open_readwrite(this);
-		mDbHelper.set_read(row_id, true);
+		mDbHelper.set_read(mRowId, true);
 		mDbHelper.close();
+
+		init_checkbox();
 
 		mDbHelper.open(this);
 
-		Cursor c = mDbHelper.fetch_bill(row_id);
+		Cursor c = mDbHelper.fetch_bill(mRowId);
 		startManagingCursor(c);
 		if (c.moveToFirst()) {
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
@@ -82,6 +88,30 @@ public class ViewBillActivity extends Activity {
 			mDbHelper.close();
 		}
 		super.onDestroy();
+	}
+
+	private void init_checkbox()
+	{
+		CheckBox read_checkbox = (CheckBox) findViewById(R.id.mark_as_read);
+		read_checkbox.setChecked(true);
+
+		read_checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
+				boolean need_reopen = false;
+				if (mDbHelper != null) {
+					mDbHelper.close();
+					need_reopen = true;
+				}
+				mDbHelper = new DbAdapter();
+				mDbHelper.open_readwrite(getApplicationContext());
+				mDbHelper.set_read(mRowId, is_checked);
+				mDbHelper.close();
+
+				if (need_reopen) {
+					mDbHelper.open(getApplicationContext());
+				}
+			}
+		});
 	}
 
 	private void print_rev(String name, String year, String status,

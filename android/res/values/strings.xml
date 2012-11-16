@@ -40,9 +40,11 @@
 
 	<string name="code">Code</string>
 	<string name="revision">Revision</string>
-	<string name="date_presented">Date Presented</string>
-	<string name="read_by">Read By</string>
-	<string name="supported_by">Supported By</string>
+	<string name="date_presented">Date presented</string>
+	<string name="read_by">Read by</string>
+	<string name="supported_by">Supported by</string>
+
+	<string name="mark_as_read">Mark as read</string>
 
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project info@sinarproject.com\n\n
