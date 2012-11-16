@@ -124,6 +124,7 @@ public class ViewBillActivity extends Activity {
 		TextView date_presented_view = (TextView) findViewById(R.id.date_presented);
 		TextView read_by_view = (TextView) findViewById(R.id.read_by);
 		TextView supported_by_view = (TextView) findViewById(R.id.supported_by);
+		TextView link_view = (TextView) findViewById(R.id.link);
 		Button view_bill_button = (Button) findViewById(R.id.view_bill);
 
 		name_view.setText(name);
@@ -132,6 +133,7 @@ public class ViewBillActivity extends Activity {
 		date_presented_view.setText(date_presented);
 		read_by_view.setText(read_by);
 		supported_by_view.setText(supported_by);
+		link_view.setText(url);
 		view_bill_button.setText(getResources().getString(R.string.view_bill));
 
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
