@@ -123,7 +123,8 @@ public class ViewBillActivity extends Activity {
 	private void view_pdf(String uri_str)
 	{
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + uri_str), "text/html");
+		String encoded_uri = Uri.encode(uri_str).replace("+", "%20");
+		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + encoded_uri), "text/html");
 		startActivity(Intent.createChooser(intent, getResources().getString(R.string.open_browser)));
 	}
 }
