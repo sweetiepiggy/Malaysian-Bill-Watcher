@@ -36,6 +36,14 @@
 	<string name="last_between">Last Update Between</string>
 	<string name="view_source">View Source</string>
 	<string name="open_browser">Open Web Browser</string>
+
+
+	<string name="code">Code</string>
+	<string name="revision">Revision</string>
+	<string name="date_presented">Date Presented</string>
+	<string name="read_by">Read By</string>
+	<string name="supported_by">Supported By</string>
+
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project info@sinarproject.com\n\n
 Malaysian Bill Watcher is free software; you can redistribute it and/or modify

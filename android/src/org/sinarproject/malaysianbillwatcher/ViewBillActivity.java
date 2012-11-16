@@ -113,21 +113,27 @@ public class ViewBillActivity extends Activity {
 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		if (name.length() == 0) {
+			layout.removeView(findViewById(R.id.name_label));
 			layout.removeView(name_view);
 		}
 		if (year.length() == 0) {
+			layout.removeView(findViewById(R.id.year_label));
 			layout.removeView(year_view);
 		}
 		if (status.length() == 0) {
+			layout.removeView(findViewById(R.id.status_label));
 			layout.removeView(status_view);
 		}
 		if (date_presented.length() == 0) {
+			layout.removeView(findViewById(R.id.date_presented_label));
 			layout.removeView(date_presented_view);
 		}
 		if (read_by.length() == 0) {
+			layout.removeView(findViewById(R.id.read_by_label));
 			layout.removeView(read_by_view);
 		}
 		if (supported_by.length() == 0) {
+			layout.removeView(findViewById(R.id.supported_by_label));
 			layout.removeView(supported_by_view);
 		}
 		if (url.length() == 0) {
