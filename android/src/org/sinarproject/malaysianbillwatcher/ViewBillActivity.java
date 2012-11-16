@@ -133,7 +133,7 @@ public class ViewBillActivity extends Activity {
 		date_presented_view.setText(date_presented);
 		read_by_view.setText(read_by.replaceAll(", ", "\n"));
 		supported_by_view.setText(supported_by.replaceAll(", ", "\n"));
-		link_view.setText(url);
+		link_view.setText(url.replace(" ", "%20"));
 		view_bill_button.setText(getResources().getString(R.string.view_bill));
 
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
