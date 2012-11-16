@@ -60,7 +60,7 @@ public class ViewBillActivity extends Activity {
 
 			Cursor c_rev = mDbHelper.fetch_revs(long_name);
 			startManagingCursor(c_rev);
-			if (c_rev.moveToFirst()) do {
+			if (c_rev.moveToFirst()) {
 				String name = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_NAME));
 				String year = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_YEAR));
 				String status = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_STATUS));
@@ -71,7 +71,8 @@ public class ViewBillActivity extends Activity {
 
 				print_rev(name, year, status, date_presented,
 						read_by, supported_by, url);
-			} while (c_rev.moveToNext());
+			}
+			//} while (c_rev.moveToNext());
 		}
 	}
 
@@ -87,13 +88,13 @@ public class ViewBillActivity extends Activity {
 			String date_presented, String read_by,
 			String supported_by, final String url)
 	{
-		TextView name_view = new TextView(getApplicationContext());
-		TextView year_view = new TextView(getApplicationContext());
-		TextView status_view = new TextView(getApplicationContext());
-		TextView date_presented_view = new TextView(getApplicationContext());
-		TextView read_by_view = new TextView(getApplicationContext());
-		TextView supported_by_view = new TextView(getApplicationContext());
-		Button view_bill_button = new Button(getApplicationContext());
+		TextView name_view = (TextView) findViewById(R.id.name);
+		TextView year_view = (TextView) findViewById(R.id.year);
+		TextView status_view = (TextView) findViewById(R.id.status);
+		TextView date_presented_view = (TextView) findViewById(R.id.date_presented);
+		TextView read_by_view = (TextView) findViewById(R.id.read_by);
+		TextView supported_by_view = (TextView) findViewById(R.id.supported_by);
+		Button view_bill_button = (Button) findViewById(R.id.view_bill);
 
 		name_view.setText(name);
 		year_view.setText(year);
@@ -111,13 +112,27 @@ public class ViewBillActivity extends Activity {
 		});
 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
-		layout.addView(name_view);
-		layout.addView(year_view);
-		layout.addView(status_view);
-		layout.addView(date_presented_view);
-		layout.addView(read_by_view);
-		layout.addView(supported_by_view);
-		layout.addView(view_bill_button);
+		if (name.length() == 0) {
+			layout.removeView(name_view);
+		}
+		if (year.length() == 0) {
+			layout.removeView(year_view);
+		}
+		if (status.length() == 0) {
+			layout.removeView(status_view);
+		}
+		if (date_presented.length() == 0) {
+			layout.removeView(date_presented_view);
+		}
+		if (read_by.length() == 0) {
+			layout.removeView(read_by_view);
+		}
+		if (supported_by.length() == 0) {
+			layout.removeView(supported_by_view);
+		}
+		if (url.length() == 0) {
+			layout.removeView(view_bill_button);
+		}
 	}
 
 	private void view_pdf(String uri_str)
