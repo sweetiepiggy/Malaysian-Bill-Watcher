@@ -37,7 +37,6 @@ public class DbAdapter
 	public static final String KEY_LONG_NAME = "long_name";
 	public static final String KEY_STATUS = "status";
 	public static final String KEY_UPDATE_DATE = "update_date";
-	public static final String KEY_CREATE_DATE = "create_date";
 	public static final String KEY_DATE_PRESENTED = "date_presented";
 	public static final String KEY_READ_BY = "read_by";
 	public static final String KEY_URL = "url";
@@ -52,21 +51,19 @@ public class DbAdapter
 
 	private static final String DATABASE_NAME = "data.db";
 	private static final String DATABASE_TABLE = "data";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	private static final String DATABASE_CREATE =
 		"CREATE TABLE " + DATABASE_TABLE + " (" +
 		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 		KEY_NAME + " TEXT, " +
 		KEY_LONG_NAME + " TEXT, " +
-
 		KEY_URL + " TEXT, " +
 		KEY_STATUS + " TEXT, " +
 		KEY_YEAR + " TEXT, " +
 		KEY_READ_BY + " TEXT, " +
 		KEY_SUPPORTED_BY + " TEXT, " +
 		KEY_DATE_PRESENTED + " TEXT, " +
-		KEY_CREATE_DATE + " TEXT, " +
 		KEY_UPDATE_DATE + " TEXT," +
 		KEY_READ + " INTEGER DEFAULT 0);";
 
@@ -101,15 +98,18 @@ public class DbAdapter
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int old_ver, int new_ver)
 		{
-			//Log.i(TAG, "upgrading database from " + old_ver +
-					//" to " + new_ver);
-			if (old_ver <= 1) {
-				//Log.i(TAG, "adding read column");
+			switch (old_ver) {
+			/* ver 2 added KEY_READ */
+			case 1:
 				db.execSQL("ALTER TABLE " + DATABASE_TABLE +
 						" ADD COLUMN " + KEY_READ +
 						" INTEGER DEFAULT 0");
-			} else {
+			/* ver 3 removed KEY_CREATE_DATE */
+			case 2:
+				break;
+			default:
 				onCreate(db);
+				break;
 			}
 		}
 
