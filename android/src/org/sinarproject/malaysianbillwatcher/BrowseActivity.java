@@ -50,12 +50,13 @@ public class BrowseActivity extends ListActivity {
 
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
 			String status = c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS));
-			int read = c.getInt(c.getColumnIndex(DbAdapter.KEY_READ));
+			boolean read = c.getInt(c.getColumnIndex(DbAdapter.KEY_READ)) != 0;
 
 			text1.setText(long_name);
 			text2.setText(status);
 
-			text1.setTypeface(null, read == 1 ? Typeface.NORMAL : Typeface.BOLD);
+			text1.setTextAppearance(context, android.R.style.TextAppearance_Large);
+			view.setBackgroundColor(read ? 0x00000000 : 0x804671D5);
 		}
 	}
 
