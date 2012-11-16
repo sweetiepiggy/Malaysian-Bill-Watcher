@@ -36,6 +36,16 @@
 	<string name="last_between">Antara tarikh kemaskini terakhir</string>
 	<string name="view_source">Kedatangan Sumber</string>
 	<string name="open_browser">Melayari Web</string>
+
+	<string name="code">Kod</string>
+	<string name="revision">Penyemakan</string>
+	<string name="date_presented">Tarikh dibentang</string>
+	<string name="read_by">Dibentang oleh</string>
+	<string name="supported_by">Disokong oleh</string>
+	<string name="link">Link</string>
+
+	<string name="mark_as_read">Tandakan sebagai sudah baca</string>
+
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project info@sinarproject.com\n\n
 Pencarian Undang-Undang adalah perisian bebas; anda boleh memaparkan dan / atau mengubah suai

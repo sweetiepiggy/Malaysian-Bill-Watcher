@@ -36,6 +36,16 @@
 	<string name="last_between">距离最后更新</string>
 	<string name="view_source">代码来源</string>
 	<string name="open_browser">浏览网络</string>
+
+	<string name="code">代码</string>
+	<string name="revision">修订本</string>
+	<string name="date_presented">提呈日期</string>
+	<string name="read_by">宣读者</string>
+	<string name="supported_by">支持者</string>
+	<string name="link">互联网链接</string>
+
+	<string name="mark_as_read">标记为已读</string>
+
 	<string name="gpl">
 版權所有(C) 2012 Sinar Project info@sinarproject.com\n\n
 
