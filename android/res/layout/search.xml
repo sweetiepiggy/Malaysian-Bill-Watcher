@@ -31,20 +31,19 @@
 			android:id="@+id/bill_name"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:textStyle="bold"
+			style="@android:style/TextAppearance.Large"
 			android:text="@string/bill_name" />
 		<EditText
 			android:id="@+id/bill_name_entry"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:hint="@string/bill_name_hint"
-			android:background="@android:drawable/editbox_background"/>
+			android:hint="@string/bill_name_hint" />
 
 		<TextView
 			android:id="@+id/status_label"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:textStyle="bold"
+			style="@android:style/TextAppearance.Large"
 			android:text="@string/status" />
 		<Spinner
 			android:id="@+id/status_spinner"
@@ -56,7 +55,7 @@
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:textStyle="bold"
+			style="@android:style/TextAppearance.Large"
 			android:text="@string/last_between" />
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:orientation="horizontal"
