@@ -133,6 +133,7 @@ public class SearchActivity extends Activity
 				android.R.layout.simple_spinner_item,
 				c, new String[] {DbAdapter.KEY_STATUS},
 				new int[] {android.R.id.text1});
+		status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		Spinner status_spinner = (Spinner) findViewById(R.id.status_spinner);
 		status_spinner.setAdapter(status);
 
