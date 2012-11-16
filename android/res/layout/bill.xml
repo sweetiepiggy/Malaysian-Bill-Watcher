@@ -18,108 +18,112 @@
     along with Malaysian Bill Watcher; if not, see <http://www.gnu.org/licenses/>.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/layout"
-	android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent" >
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/layout"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/long_name"
-		style="@android:style/TextAppearance.Large"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/long_name"
+			style="@android:style/TextAppearance.Large"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/name_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/code" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/name"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/name_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/code" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/year_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/revision" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/year"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/year_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/revision" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/year"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/status_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/status" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/status"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/status_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/status" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/status"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/date_presented_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/date_presented" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/date_presented"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/date_presented_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/date_presented" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/date_presented"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/read_by_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/read_by" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/read_by"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/read_by_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/read_by" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/read_by"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/supported_by_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/supported_by" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/supported_by"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/supported_by_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/supported_by" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/supported_by"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/link_label"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/link" />
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/link"
-		android:autoLink="web"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/link_label"
+			style="@android:style/TextAppearance.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/link" />
+		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/link"
+			android:autoLink="web"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-	<Button xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/view_bill"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/pdf"
-		android:drawablePadding="5dp"
-		android:text="@string/view_bill" />
+		<Button xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/view_bill"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableLeft="@drawable/pdf"
+			android:drawablePadding="5dp"
+			android:text="@string/view_bill" />
 
-	<CheckBox
-		android:id="@+id/mark_as_read"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/mark_as_read" />
-</LinearLayout>
+		<CheckBox
+			android:id="@+id/mark_as_read"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/mark_as_read" />
+	</LinearLayout>
+</ScrollView>
 
