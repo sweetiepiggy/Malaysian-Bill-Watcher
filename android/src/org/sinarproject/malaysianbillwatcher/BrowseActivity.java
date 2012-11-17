@@ -139,15 +139,6 @@ public class BrowseActivity extends ListActivity {
 		});
 	}
 
-	private void update_row_colors(int color)
-	{
-		ListView lv = getListView();
-		int child_cnt = lv.getChildCount();
-		for (int i = 0; i < child_cnt; ++i) {
-			lv.getChildAt(i).setBackgroundColor(color);
-		}
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -160,6 +151,7 @@ public class BrowseActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		DbAdapter dbHelper;
+		int pos;
 		switch (item.getItemId()) {
 		case R.id.mark_all_read:
 			dbHelper = new DbAdapter();
@@ -167,7 +159,9 @@ public class BrowseActivity extends ListActivity {
 			dbHelper.set_read(true, m_bill_name, m_status,
 					m_after_date, m_before_date);
 			dbHelper.close();
-			update_row_colors(BG_COLOR_READ);
+			pos = getListView().getFirstVisiblePosition();
+			fill_data(m_bill_name, m_status, m_after_date, m_before_date);
+			getListView().setSelection(pos);
 			return true;
 		case R.id.mark_all_unread:
 			dbHelper = new DbAdapter();
@@ -175,7 +169,9 @@ public class BrowseActivity extends ListActivity {
 			dbHelper.set_read(false, m_bill_name, m_status,
 					m_after_date, m_before_date);
 			dbHelper.close();
-			update_row_colors(BG_COLOR_UNREAD);
+			pos = getListView().getFirstVisiblePosition();
+			fill_data(m_bill_name, m_status, m_after_date, m_before_date);
+			getListView().setSelection(pos);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
