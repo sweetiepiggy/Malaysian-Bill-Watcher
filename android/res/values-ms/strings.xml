@@ -23,6 +23,7 @@
 <resources>
 	<string name="app_name">Pencarian Undang2</string>
 	<string name="view_bill">Melihat PDF</string>
+	<string name="tweet">Tweet</string>
 	<string name="browse_bills">Melayari\nUndang-\nUndang</string>
 	<string name="search_bills">Carian\nUndang-\nUndang</string>
 	<string name="sync">Penyegerakan</string>

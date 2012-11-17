@@ -23,6 +23,7 @@
 <resources>
 	<string name="app_name">马来西亚法案搜索器</string>
 	<string name="view_bill">查看PDF</string>
+	<string name="tweet">啁啾 </string>
 	<string name="browse_bills">浏览法案</string>
 	<string name="search_bills">搜索法案</string>
 	<string name="sync">同步</string>

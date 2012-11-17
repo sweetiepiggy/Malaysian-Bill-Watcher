@@ -44,8 +44,8 @@ public class BrowseActivity extends ListActivity {
 	private Calendar m_after_date;
 	private Calendar m_before_date;
 
-	private int BG_COLOR_READ = 0x00000000;
-	private int BG_COLOR_UNREAD = 0x804671D5;
+	private static final int BG_COLOR_READ = 0x00000000;
+	private static final int BG_COLOR_UNREAD = 0x804671D5;
 
 	private class BrowseBillListAdapter extends ResourceCursorAdapter {
 		public BrowseBillListAdapter(Context context, Cursor c) {

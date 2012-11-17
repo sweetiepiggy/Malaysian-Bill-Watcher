@@ -34,8 +34,9 @@ import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
 	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
-	DbAdapter mDbHelper;
-	Long mRowId;
+	private DbAdapter mDbHelper;
+	private Long mRowId;
+	private static final String TWITTER_ADDR = "@sinarproject";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -98,7 +99,7 @@ public class ViewBillActivity extends Activity {
 		});
 	}
 
-	private void print_rev(String long_name, String name, String year,
+	private void print_rev(final String long_name, String name, String year,
 			String status, String date_presented, String read_by,
 			String supported_by, final String url)
 	{
@@ -112,11 +113,18 @@ public class ViewBillActivity extends Activity {
 		((TextView) findViewById(R.id.link)).setText(url.replace(" ", "%20"));
 
 		Button view_bill_button = (Button) findViewById(R.id.view_bill);
-		view_bill_button.setText(getResources().getString(R.string.view_bill));
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
 				view_pdf(url);
+			}
+		});
+
+		Button tweet_button = (Button) findViewById(R.id.tweet);
+		tweet_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				send_tweet(long_name, url);
 			}
 		});
 	}
@@ -127,6 +135,20 @@ public class ViewBillActivity extends Activity {
 		String encoded_uri = Uri.encode(uri_str).replace("+", "%20");
 		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + encoded_uri), "text/html");
 		startActivity(Intent.createChooser(intent, getResources().getString(R.string.open_browser)));
+	}
+
+	private void send_tweet(String long_name, String url)
+	{
+		String msg = format_tweet(long_name, url);
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT, msg);
+		startActivity(Intent.createChooser(intent, null));
+	}
+
+	private String format_tweet(String long_name, String url)
+	{
+		return long_name + " " + url + " via " + TWITTER_ADDR;
 	}
 }
 
