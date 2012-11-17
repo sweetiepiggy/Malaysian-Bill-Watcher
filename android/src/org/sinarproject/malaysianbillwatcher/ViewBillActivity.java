@@ -90,19 +90,10 @@ public class ViewBillActivity extends Activity {
 
 		read_checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
-				boolean need_reopen = false;
-				if (mDbHelper != null) {
-					mDbHelper.close();
-					need_reopen = true;
-				}
-				mDbHelper = new DbAdapter();
-				mDbHelper.open_readwrite(ViewBillActivity.this);
-				mDbHelper.set_read(mRowId, is_checked);
-				mDbHelper.close();
-
-				if (need_reopen) {
-					mDbHelper.open(ViewBillActivity.this);
-				}
+				DbAdapter dbHelper = new DbAdapter();
+				dbHelper.open_readwrite(ViewBillActivity.this);
+				dbHelper.set_read(mRowId, is_checked);
+				dbHelper.close();
 			}
 		});
 	}

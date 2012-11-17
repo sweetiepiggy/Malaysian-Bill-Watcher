@@ -298,6 +298,39 @@ public class DbAdapter
 		return rows_affected == 1;
 	}
 
+	public void set_read(boolean read, String bill_name, String status,
+			Calendar after_date, Calendar before_date)
+	{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String before = df.format(before_date.getTime());
+		String after = df.format(after_date.getTime());
+		String key_status = KEY_STATUS + "_" +
+			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
+
+		Cursor c = mDbHelper.mDb.rawQuery("UPDATE " + TABLE_REVS + " SET " +
+				KEY_READ + " = " + (read ? "1" : "0") +
+				" WHERE " + KEY_ROWID + " IN " +
+				"(SELECT " + TABLE_REVS +
+				"." + KEY_ROWID + " AS " + KEY_ROWID +
+				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
+				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +
+				TABLE_BILLS + "." + KEY_ROWID + " JOIN " +
+				TABLE_STATUS + " ON " + TABLE_REVS + "." +
+				KEY_STATUS_ID + " == " + TABLE_STATUS + "." +
+				KEY_ROWID +
+				" WHERE " + KEY_LONG_NAME + " LIKE ? AND " +
+					"(" + key_status + " = ? OR \"\" = ?) AND " +
+					KEY_UPDATE_DATE + " < " + "? AND " +
+					KEY_UPDATE_DATE + " > " + "?)",
+			new String[] {"%" + bill_name + "%", status,
+				status, before, after});
+
+		/* need to interact and close cursor in order for UPDATE to
+			take effect */
+		c.moveToFirst();
+		c.close();
+	}
+
 	public Cursor fetch_revs(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{

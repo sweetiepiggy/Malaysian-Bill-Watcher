@@ -39,7 +39,10 @@ import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
 	DbAdapter mDbHelper;
-	Cursor mCursor;
+	String m_bill_name;
+	String m_status;
+	Calendar m_after_date;
+	Calendar m_before_date;
 
 	private class BrowseBillListAdapter extends ResourceCursorAdapter {
 		public BrowseBillListAdapter(Context context, Cursor c) {
@@ -69,24 +72,24 @@ public class BrowseActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		Bundle b = getIntent().getExtras();
-		String bill_name = (b == null) ? "" : b.getString("bill_name");
-		String status = (b == null) ? "" : b.getString("status");
+		m_bill_name = (b == null) ? "" : b.getString("bill_name");
+		m_status = (b == null) ? "" : b.getString("status");
 
 		final Calendar now = Calendar.getInstance();
-		Calendar after_date = new GregorianCalendar();
-		Calendar before_date = new GregorianCalendar();
+		m_after_date = new GregorianCalendar();
+		m_before_date = new GregorianCalendar();
 		if (b == null) {
-			after_date.set(1970, 0, 1, 0, 0);
-			before_date.set(now.get(Calendar.YEAR),
+			m_after_date.set(1970, 0, 1, 0, 0);
+			m_before_date.set(now.get(Calendar.YEAR),
 					now.get(Calendar.MONTH),
 					now.get(Calendar.DAY_OF_MONTH),
 					23, 59);
 		} else {
-			after_date.set(b.getInt("after_year"),
+			m_after_date.set(b.getInt("after_year"),
 					b.getInt("after_month"),
 					b.getInt("after_day"),
 					0, 0);
-			before_date.set(b.getInt("before_year"),
+			m_before_date.set(b.getInt("before_year"),
 					b.getInt("before_month"),
 					b.getInt("before_day"),
 					23, 59);
@@ -95,7 +98,7 @@ public class BrowseActivity extends ListActivity {
 		mDbHelper = new DbAdapter();
 		mDbHelper.open(this);
 
-		fill_data(bill_name, status, after_date, before_date);
+		fill_data(m_bill_name, m_status, m_after_date, m_before_date);
 		init_click();
 	}
 
@@ -110,10 +113,10 @@ public class BrowseActivity extends ListActivity {
 	private void fill_data(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{
-		mCursor = mDbHelper.fetch_revs(bill_name, status, after_date,
+		Cursor c = mDbHelper.fetch_revs(bill_name, status, after_date,
 				before_date);
-		startManagingCursor(mCursor);
-		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, mCursor);
+		startManagingCursor(c);
+		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, c);
 		setListAdapter(revs);
 	}
 
@@ -142,20 +145,22 @@ public class BrowseActivity extends ListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		DbAdapter dbHelper;
 		switch (item.getItemId()) {
-		/* TODO: don't run in main thread */
 		/* TODO: refresh row colors */
 		case R.id.mark_all_read:
-			if (mCursor.moveToFirst()) do {
-				long id = mCursor.getInt(mCursor.getColumnIndex(DbAdapter.KEY_ROWID));
-				mDbHelper.set_read(id, true);
-			} while (mCursor.moveToNext());
+			dbHelper = new DbAdapter();
+			dbHelper.open_readwrite(BrowseActivity.this);
+			dbHelper.set_read(true, m_bill_name, m_status,
+					m_after_date, m_before_date);
+			dbHelper.close();
 			return true;
 		case R.id.mark_all_unread:
-			if (mCursor.moveToFirst()) do {
-				long id = mCursor.getInt(mCursor.getColumnIndex(DbAdapter.KEY_ROWID));
-				mDbHelper.set_read(id, false);
-			} while (mCursor.moveToNext());
+			dbHelper = new DbAdapter();
+			dbHelper.open_readwrite(BrowseActivity.this);
+			dbHelper.set_read(false, m_bill_name, m_status,
+					m_after_date, m_before_date);
+			dbHelper.close();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
