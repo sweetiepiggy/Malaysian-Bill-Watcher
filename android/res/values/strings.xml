@@ -46,6 +46,8 @@
 
 	<string name="mark_as_read">Mark as read</string>
 
+	<string name="lang_code">en</string>
+
 	<string name="gpl">
 Copyright (C) 2012 Sinar Project info@sinarproject.com\n\n
 Malaysian Bill Watcher is free software; you can redistribute it and/or modify

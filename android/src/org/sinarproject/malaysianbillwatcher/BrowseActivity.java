@@ -107,11 +107,11 @@ public class BrowseActivity extends ListActivity {
 	private void fill_data(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{
-		Cursor c = mDbHelper.fetch_bills(bill_name, status, after_date,
+		Cursor c = mDbHelper.fetch_revs(bill_name, status, after_date,
 				before_date);
 		startManagingCursor(c);
-		BrowseBillListAdapter bills = new BrowseBillListAdapter(this, c);
-		setListAdapter(bills);
+		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, c);
+		setListAdapter(revs);
 	}
 
 	private void init_click()

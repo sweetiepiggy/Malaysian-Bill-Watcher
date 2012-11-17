@@ -58,7 +58,7 @@ public class ViewBillActivity extends Activity {
 
 		mDbHelper.open(this);
 
-		Cursor c = mDbHelper.fetch_bill(mRowId);
+		Cursor c = mDbHelper.fetch_rev(mRowId);
 		if (c.moveToFirst()) {
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
 			String name = c.getString(c.getColumnIndex(DbAdapter.KEY_NAME));

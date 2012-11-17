@@ -118,7 +118,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		private Boolean done = false;
 		private Boolean in_item = false;
 		private String cur_chars = "";
-		private String last_update = "1970-01-01 00:00:00";
+		private String m_last_update = "";
 
 		private String long_name = "";
 		private String year = "";
@@ -135,11 +135,9 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		{
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open_no_sync(mCtx);
-			Cursor c = dbHelper.fetch_last_update();
-			if (c.moveToFirst()) {
-				last_update = c.getString(c.getColumnIndex(DbAdapter.KEY_UPDATE_DATE));
-			}
-			c.close();
+
+			m_last_update = dbHelper.get_last_update();
+
 			dbHelper.close();
 		}
 
@@ -161,7 +159,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			if (!done) {
 				if (local_name.equalsIgnoreCase("item")) {
 					/* TODO: should use strftime() first? */
-					if (last_update.compareTo(update_date) < 0) {
+					if (m_last_update.compareTo(update_date) < 0) {
 						update_db();
 					} else {
 						done = true;
@@ -284,7 +282,9 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(mCtx);
 
-			dbHelper.create_bill(long_name, year, status, url, name, read_by, supported_by, date_presented, update_date);
+			dbHelper.create_bill_rev(long_name, year, status, url,
+					name, read_by, supported_by,
+					date_presented, update_date);
 
 			dbHelper.close();
 		}

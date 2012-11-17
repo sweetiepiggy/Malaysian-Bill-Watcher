@@ -31,9 +31,23 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbAdapter
 {
+	private static final String ACCEPTED_EN = "Accepted";
+	private static final String ACCEPTED_MS = "Accepted";
+	private static final String ACCEPTED_ZH = "Accepted";
+	private static final String SECOND_AND_THIRD_EN = "Second And Third Reading";
+	private static final String SECOND_AND_THIRD_MS = "Second And Third Reading";
+	private static final String SECOND_AND_THIRD_ZH = "Second And Third Reading";
+	private static final String WITHDRAWN_EN = "Withdrawn";
+	private static final String WITHDRAWN_MS = "Withdrawn";
+	private static final String WITHDRAWN_ZH = "Withdrawn";
+
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_LONG_NAME = "long_name";
+	public static final String KEY_STATUS_ID = "status_id";
 	public static final String KEY_STATUS = "status";
+	public static final String KEY_STATUS_EN = "status_en";
+	public static final String KEY_STATUS_MS = "status_ms";
+	public static final String KEY_STATUS_ZH = "status_zh";
 	public static final String KEY_UPDATE_DATE = "update_date";
 	public static final String KEY_DATE_PRESENTED = "date_presented";
 	public static final String KEY_READ_BY = "read_by";
@@ -42,28 +56,47 @@ public class DbAdapter
 	public static final String KEY_YEAR = "year";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_READ = "read";
+	public static final String KEY_FAV = "favorite";
+	public static final String KEY_BILL_ID = "bill_id";
 
 	private static final String TAG = "DbAdapter";
 
 	private DatabaseHelper mDbHelper;
 
 	private static final String DATABASE_NAME = "data.db";
-	private static final String DATABASE_TABLE = "data";
-	private static final int DATABASE_VERSION = 3;
+	private static final String TABLE_BILLS = "bills";
+	private static final String TABLE_REVS = "bill_revs";
+	private static final String TABLE_STATUS = "status";
+	private static final int DATABASE_VERSION = 4;
 
-	private static final String DATABASE_CREATE =
-		"CREATE TABLE " + DATABASE_TABLE + " (" +
+	private static final String DATABASE_CREATE_BILLS =
+		"CREATE TABLE " + TABLE_BILLS + " (" +
 		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-		KEY_NAME + " TEXT, " +
-		KEY_LONG_NAME + " TEXT, " +
+		KEY_NAME + " TEXT UNIQUE, " +
+		KEY_LONG_NAME + " TEXT);";
+
+	private static final String DATABASE_CREATE_REVS =
+		"CREATE TABLE " + TABLE_REVS + " (" +
+		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		KEY_BILL_ID + " INTEGER, " +
 		KEY_URL + " TEXT, " +
-		KEY_STATUS + " TEXT, " +
+		KEY_STATUS_ID + " TEXT, " +
 		KEY_YEAR + " TEXT, " +
 		KEY_READ_BY + " TEXT, " +
 		KEY_SUPPORTED_BY + " TEXT, " +
 		KEY_DATE_PRESENTED + " TEXT, " +
 		KEY_UPDATE_DATE + " TEXT," +
-		KEY_READ + " INTEGER DEFAULT 0);";
+		KEY_READ + " INTEGER DEFAULT 0," +
+		KEY_FAV + " INTEGER DEFAULT 0," +
+		"FOREIGN KEY(" + KEY_BILL_ID + ") REFERENCES " + TABLE_BILLS + "(" + KEY_ROWID + "), " +
+		"FOREIGN KEY(" + KEY_STATUS_ID + ") REFERENCES " + TABLE_STATUS + "(" + KEY_ROWID + "));";
+
+	private static final String DATABASE_CREATE_STATUS =
+		"CREATE TABLE " + TABLE_STATUS + " (" +
+		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		KEY_STATUS_EN + " TEXT, " +
+		KEY_STATUS_MS + " TEXT, " +
+		KEY_STATUS_ZH + " TEXT);";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
@@ -78,11 +111,39 @@ public class DbAdapter
 			mAllowSync = allow_sync;
 		}
 
+		private void init_status_table(SQLiteDatabase db)
+		{
+			create_status(db, ACCEPTED_EN, ACCEPTED_MS,
+					ACCEPTED_ZH);
+			create_status(db, SECOND_AND_THIRD_EN,
+					SECOND_AND_THIRD_MS,
+					SECOND_AND_THIRD_ZH);
+			create_status(db, WITHDRAWN_EN, WITHDRAWN_MS,
+					WITHDRAWN_ZH);
+		}
+
+		/** @return row_id or -1 if failed */
+		private long create_status(SQLiteDatabase db, String status_en,
+				String status_ms, String status_zh)
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_STATUS_EN, status_en);
+			cv.put(KEY_STATUS_MS, status_ms);
+			cv.put(KEY_STATUS_ZH, status_zh);
+
+			return db.insert(TABLE_STATUS, null, cv);
+		}
+
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-			db.execSQL(DATABASE_CREATE);
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVS);
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS);
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_BILLS);
+			db.execSQL(DATABASE_CREATE_BILLS);
+			db.execSQL(DATABASE_CREATE_STATUS);
+			init_status_table(db);
+			db.execSQL(DATABASE_CREATE_REVS);
 			if (mAllowSync) {
 				SyncTask sync = new SyncTask(mCtx);
 				sync.execute();
@@ -94,13 +155,9 @@ public class DbAdapter
 		{
 			switch (old_ver) {
 			/* ver 2 added KEY_READ */
-			case 1:
-				db.execSQL("ALTER TABLE " + DATABASE_TABLE +
-						" ADD COLUMN " + KEY_READ +
-						" INTEGER DEFAULT 0");
 			/* ver 3 removed KEY_CREATE_DATE */
-			case 2:
-				break;
+			/* ver 4 renamed split data table into bills, bill_revs, and status tables */
+			/* drop tables and recreate from scratch */
 			default:
 				onCreate(db);
 				break;
@@ -155,38 +212,73 @@ public class DbAdapter
 		mDbHelper.close();
 	}
 
-	/** @return row_id or -1 if failed */
-	public long create_bill(String long_name, String year, String status,
-			String url, String name, String read_by,
+	/** @return TABLE_REVS row_id or -1 if failed */
+	public long create_bill_rev(String long_name, String year,
+			String status, String url, String name, String read_by,
 			String supported_by, String date_presented,
 			String update_date)
 	{
+		long bill_id = create_bill(long_name, name);
+		if (bill_id == -1) {
+			return -1;
+		}
+
+		long status_id = fetch_or_create_status(status);
+		if (status_id == -1) {
+			return -1;
+		}
+
+		return create_rev(year, bill_id, status_id, url, read_by,
+				supported_by, date_presented,
+				update_date);
+	}
+
+	/** @return row_id or -1 if failed */
+	private long create_bill(String long_name, String name)
+	{
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_LONG_NAME, long_name);
+		cv.put(KEY_NAME, name);
+		return mDbHelper.mDb.replace(TABLE_BILLS, null, cv);
+	}
+
+	/** @return row_id or -1 if failed */
+	private long create_rev(String year, long bill_id, long status_id,
+			String url, String read_by, String supported_by,
+			String date_presented, String update_date)
+	{
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_YEAR, year);
+		cv.put(KEY_BILL_ID, Long.toString(bill_id));
+		cv.put(KEY_STATUS_ID, Long.toString(status_id));
+		cv.put(KEY_URL, url);
+		cv.put(KEY_READ_BY, read_by);
+		cv.put(KEY_SUPPORTED_BY, supported_by);
+		cv.put(KEY_DATE_PRESENTED, date_presented);
+		cv.put(KEY_UPDATE_DATE, update_date);
+		cv.put(KEY_READ, 0);
+
+		return mDbHelper.mDb.insert(TABLE_REVS, null, cv);
+	}
+
+	/** @return row_id or -1 if failed */
+	private long fetch_or_create_status(String status_en)
+	{
 		long ret = -1;
 
-		ContentValues initial_values = new ContentValues();
-		initial_values.put(KEY_LONG_NAME, long_name);
-		initial_values.put(KEY_YEAR, year);
-		initial_values.put(KEY_STATUS, status);
-		initial_values.put(KEY_URL, url);
-		initial_values.put(KEY_NAME, name);
-		initial_values.put(KEY_READ_BY, read_by);
-		initial_values.put(KEY_SUPPORTED_BY, supported_by);
-		initial_values.put(KEY_DATE_PRESENTED, date_presented);
-		initial_values.put(KEY_UPDATE_DATE, update_date);
-		initial_values.put(KEY_READ, 0);
-
-		Cursor c = fetch_bill(long_name, name);
-		/* bill already exists, just update it */
+		Cursor c = mDbHelper.mDb.query(TABLE_STATUS,
+				new String[] {KEY_ROWID},
+				KEY_STATUS_EN + " = ?", new String[] {status_en},
+				null, null, null, "1");
 		if (c.moveToFirst()) {
-			long row_id = c.getLong(c.getColumnIndex(KEY_ROWID));
-			mDbHelper.mDb.update(DATABASE_TABLE, initial_values,
-				KEY_ROWID + " = ?",
-				new String[] {Long.toString(row_id)});
-
-		/* create new bill */
+			ret = c.getInt(c.getColumnIndex(KEY_ROWID));
 		} else {
-			ret =  mDbHelper.mDb.insert(DATABASE_TABLE, null,
-				initial_values);
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_STATUS_EN, status_en);
+			cv.put(KEY_STATUS_MS, status_en);
+			cv.put(KEY_STATUS_ZH, status_en);
+
+			ret = mDbHelper.mDb.insert(TABLE_STATUS, null, cv);
 		}
 		c.close();
 
@@ -199,86 +291,79 @@ public class DbAdapter
 		ContentValues values = new ContentValues();
 		values.put(KEY_READ, read ? 1 : 0);
 
-		int rows_affected = mDbHelper.mDb.update(DATABASE_TABLE, values,
+		int rows_affected = mDbHelper.mDb.update(TABLE_REVS, values,
 			KEY_ROWID + " = ?",
 			new String[] {Long.toString(row_id)});
 
 		return rows_affected == 1;
 	}
 
-	public Cursor fetch_bills()
-	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
-				null, null, null, null,
-				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
-				null);
-	}
-
-	public Cursor fetch_bills(String bill_name, String status,
+	public Cursor fetch_revs(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String before = df.format(before_date.getTime());
 		String after = df.format(after_date.getTime());
+		String key_status = KEY_STATUS + "_" +
+			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
 
-		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS, KEY_READ},
-				KEY_LONG_NAME + " LIKE ? AND " +
-					"(" + KEY_STATUS + " = ? OR \"\" = ?) AND " +
+		return mDbHelper.mDb.rawQuery("SELECT " + TABLE_REVS +
+				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
+				KEY_LONG_NAME + ", " + key_status + " AS " +
+				KEY_STATUS + ", " + KEY_READ +
+				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
+				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +
+				TABLE_BILLS + "." + KEY_ROWID + " JOIN " +
+				TABLE_STATUS + " ON " + TABLE_REVS + "." +
+				KEY_STATUS_ID + " == " + TABLE_STATUS + "." +
+				KEY_ROWID +
+				" WHERE " + KEY_LONG_NAME + " LIKE ? AND " +
+					"(" + key_status + " = ? OR \"\" = ?) AND " +
 					KEY_UPDATE_DATE + " < " + "? AND " +
-					KEY_UPDATE_DATE + " > " + "?",
-				new String[] {"%" + bill_name + "%", status,
-					status, before, after},
-				null, null,
-				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
-				null);
+					KEY_UPDATE_DATE + " > " + "? " +
+				"ORDER BY strftime('%s', " + KEY_UPDATE_DATE + ") DESC",
+			new String[] {"%" + bill_name + "%", status,
+				status, before, after});
 	}
 
-	public Cursor fetch_bill(String long_name, String name)
+	public Cursor fetch_rev(long id)
 	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_ROWID},
-				KEY_LONG_NAME + " = ? AND " + KEY_NAME + " = ?",
-				new String[] {long_name, name},
-				null, null, null);
+		String key_status = KEY_STATUS + "_" +
+			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
+		return mDbHelper.mDb.rawQuery("SELECT " + TABLE_REVS +
+				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
+				KEY_LONG_NAME + ", " + key_status + " AS " +
+				KEY_STATUS + ", " + KEY_YEAR + ", " + KEY_URL + ", " +
+				KEY_NAME + ", " + KEY_DATE_PRESENTED + ", " +
+				KEY_READ_BY + ", " + KEY_SUPPORTED_BY +
+				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
+				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +
+				TABLE_BILLS + "." + KEY_ROWID + " JOIN " +
+				TABLE_STATUS + " ON " + TABLE_REVS + "." +
+				KEY_STATUS_ID + " == " + TABLE_STATUS + "." +
+				KEY_ROWID +
+				" WHERE " + TABLE_REVS + "." + KEY_ROWID + " = ?",
+			new String[] {Long.toString(id)});
 	}
 
-
-	public Cursor fetch_revs(String long_name)
+	public String get_last_update()
 	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_URL, KEY_STATUS, KEY_YEAR,
-					KEY_NAME, KEY_DATE_PRESENTED,
-					KEY_READ_BY, KEY_SUPPORTED_BY},
-				KEY_LONG_NAME + " = ?", new String[] {long_name},
-				null, null,
-				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
-				null);
-	}
-
-	public Cursor fetch_bill(long id)
-	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_URL, KEY_LONG_NAME, KEY_STATUS,
-					KEY_YEAR, KEY_NAME, KEY_DATE_PRESENTED,
-					KEY_READ_BY, KEY_SUPPORTED_BY},
-				KEY_ROWID + " = ?", new String[] {Long.toString(id)},
-				null, null, null, null);
-	}
-
-	public Cursor fetch_last_update()
-	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
+		Cursor c = mDbHelper.mDb.query(TABLE_REVS,
 				new String[] {KEY_ROWID, KEY_UPDATE_DATE},
 				null, null, null, null,
 				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC LIMIT 1",
 				null);
+		String ret = "1970-01-01 00:00:00";
+		if (c.moveToFirst()) {
+			ret = c.getString(c.getColumnIndex(KEY_UPDATE_DATE));
+		}
+		c.close();
+		return ret;
 	}
 
 	public Cursor fetch_first_update()
 	{
-		return mDbHelper.mDb.query(DATABASE_TABLE,
+		return mDbHelper.mDb.query(TABLE_REVS,
 				new String[] {KEY_ROWID,
 					"strftime(\"%Y\", " + KEY_UPDATE_DATE + ")",
 					"strftime(\"%m\", " + KEY_UPDATE_DATE + ")",
@@ -290,9 +375,12 @@ public class DbAdapter
 
 	public Cursor fetch_status()
 	{
-		return mDbHelper.mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_STATUS},
-				"length(" + KEY_STATUS + ") != 0", null,
-				KEY_STATUS, null, KEY_STATUS + " ASC", null);
+		String key_status = KEY_STATUS + "_" +
+			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
+		return mDbHelper.mDb.query(true, TABLE_STATUS, new String[] {KEY_ROWID,
+					key_status + " AS " + KEY_STATUS},
+				"length(" + key_status + ") != 0", null,
+				key_status, null, key_status + " ASC", null);
 	}
 }
 
