@@ -45,6 +45,8 @@
 	<string name="link">互联网链接</string>
 
 	<string name="mark_as_read">标记为已读</string>
+	<string name="mark_all_read">标记全部为已读</string>
+	<string name="mark_all_unread">标记全部为未读</string>
 
 	<string name="lang_code">zh</string>
 
