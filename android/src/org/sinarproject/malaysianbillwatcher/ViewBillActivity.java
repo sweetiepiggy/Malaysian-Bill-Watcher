@@ -134,7 +134,7 @@ public class ViewBillActivity extends Activity {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		String encoded_uri = Uri.encode(uri_str).replace("+", "%20");
 		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + encoded_uri), "text/html");
-		startActivity(Intent.createChooser(intent, getResources().getString(R.string.open_browser)));
+		startActivity(Intent.createChooser(intent, null));
 	}
 
 	private void send_tweet(String long_name, String url)
