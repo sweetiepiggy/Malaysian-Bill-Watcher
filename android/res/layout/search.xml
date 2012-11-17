@@ -37,6 +37,8 @@
 			android:id="@+id/bill_name_entry"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
+			android:inputType="textShortMessage"
+			android:imeOptions="actionGo"
 			android:hint="@string/bill_name_hint" />
 
 		<TextView

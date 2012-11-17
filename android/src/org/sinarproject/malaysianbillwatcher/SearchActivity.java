@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.inputmethod.EditorInfo;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -37,6 +39,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class SearchActivity extends Activity
 {
@@ -65,6 +69,7 @@ public class SearchActivity extends Activity
 
 		init_date_buttons();
 		init_status_spinner();
+		init_edittext();
 		init_search_button();
 	}
 
@@ -153,26 +158,45 @@ public class SearchActivity extends Activity
 		});
 	}
 
+	private void init_edittext()
+	{
+		EditText bill_name_entry = (EditText) findViewById(R.id.bill_name_entry);
+		bill_name_entry.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int action_id, KeyEvent event) {
+				if (action_id == EditorInfo.IME_ACTION_GO) {
+					search();
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+
 	private void init_search_button()
 	{
 		Button search_button = (Button) findViewById(R.id.search_button);
 		search_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
-				Intent intent = new Intent(getApplicationContext(), BrowseActivity.class);
-				Bundle b = new Bundle();
-				b.putString("bill_name", ((EditText) findViewById(R.id.bill_name_entry)).getText().toString());
-				b.putString("status", m_status);
-				b.putInt("before_year", m_before_year);
-				b.putInt("before_month", m_before_month);
-				b.putInt("before_day", m_before_day);
-				b.putInt("after_year", m_after_year);
-				b.putInt("after_month", m_after_month);
-				b.putInt("after_day", m_after_day);
-				intent.putExtras(b);
-				startActivity(intent);
+				search();
 			}
 		});
+	}
+
+	private void search()
+	{
+		Intent intent = new Intent(getApplicationContext(), BrowseActivity.class);
+		Bundle b = new Bundle();
+		b.putString("bill_name", ((EditText) findViewById(R.id.bill_name_entry)).getText().toString());
+		b.putString("status", m_status);
+		b.putInt("before_year", m_before_year);
+		b.putInt("before_month", m_before_month);
+		b.putInt("before_day", m_before_day);
+		b.putInt("after_year", m_after_year);
+		b.putInt("after_month", m_after_month);
+		b.putInt("after_day", m_after_day);
+		intent.putExtras(b);
+		startActivity(intent);
 	}
 
 	@Override
