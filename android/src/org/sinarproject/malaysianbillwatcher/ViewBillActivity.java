@@ -69,9 +69,10 @@ public class ViewBillActivity extends Activity {
 			String read_by = c.getString(c.getColumnIndex(DbAdapter.KEY_READ_BY));
 			String supported_by = c.getString(c.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
 			String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
+			String sinar_url = c.getString(c.getColumnIndex(DbAdapter.KEY_SINAR_URL));
 
 			print_rev(long_name, name, year, status, date_presented,
-					read_by, supported_by, url);
+					read_by, supported_by, url, sinar_url);
 		}
 		c.close();
 	}
@@ -101,7 +102,7 @@ public class ViewBillActivity extends Activity {
 
 	private void print_rev(final String long_name, String name, String year,
 			String status, String date_presented, String read_by,
-			String supported_by, final String url)
+			String supported_by, final String url, final String sinar_url)
 	{
 		((TextView) findViewById(R.id.long_name)).setText(long_name);
 		((TextView) findViewById(R.id.name)).setText(name);
@@ -124,7 +125,7 @@ public class ViewBillActivity extends Activity {
 		tweet_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
-				send_tweet(long_name, url);
+				send_tweet(long_name, sinar_url);
 			}
 		});
 	}

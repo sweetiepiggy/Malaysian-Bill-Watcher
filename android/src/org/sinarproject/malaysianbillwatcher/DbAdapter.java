@@ -52,6 +52,7 @@ public class DbAdapter
 	public static final String KEY_DATE_PRESENTED = "date_presented";
 	public static final String KEY_READ_BY = "read_by";
 	public static final String KEY_URL = "url";
+	public static final String KEY_SINAR_URL = "sinar_url";
 	public static final String KEY_SUPPORTED_BY = "supported_by";
 	public static final String KEY_YEAR = "year";
 	public static final String KEY_NAME = "name";
@@ -67,7 +68,7 @@ public class DbAdapter
 	private static final String TABLE_BILLS = "bills";
 	private static final String TABLE_REVS = "bill_revs";
 	private static final String TABLE_STATUS = "status";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 	private static final String DATABASE_CREATE_BILLS =
 		"CREATE TABLE " + TABLE_BILLS + " (" +
@@ -80,6 +81,7 @@ public class DbAdapter
 		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 		KEY_BILL_ID + " INTEGER, " +
 		KEY_URL + " TEXT, " +
+		KEY_SINAR_URL + " TEXT, " +
 		KEY_STATUS_ID + " TEXT, " +
 		KEY_YEAR + " TEXT, " +
 		KEY_READ_BY + " TEXT, " +
@@ -157,6 +159,7 @@ public class DbAdapter
 			/* ver 2 added KEY_READ */
 			/* ver 3 removed KEY_CREATE_DATE */
 			/* ver 4 renamed split data table into bills, bill_revs, and status tables */
+			/* ver 5 added KEY_SINAR_URL */
 			/* drop tables and recreate from scratch */
 			default:
 				onCreate(db);
@@ -214,9 +217,9 @@ public class DbAdapter
 
 	/** @return TABLE_REVS row_id or -1 if failed */
 	public long create_bill_rev(String long_name, String year,
-			String status, String url, String name, String read_by,
-			String supported_by, String date_presented,
-			String update_date)
+			String status, String url, String sinar_url,
+			String name, String read_by, String supported_by,
+			String date_presented, String update_date)
 	{
 		long bill_id = create_bill(long_name, name);
 		if (bill_id == -1) {
@@ -228,8 +231,8 @@ public class DbAdapter
 			return -1;
 		}
 
-		return create_rev(year, bill_id, status_id, url, read_by,
-				supported_by, date_presented,
+		return create_rev(year, bill_id, status_id, url, sinar_url,
+				read_by, supported_by, date_presented,
 				update_date);
 	}
 
@@ -244,14 +247,16 @@ public class DbAdapter
 
 	/** @return row_id or -1 if failed */
 	private long create_rev(String year, long bill_id, long status_id,
-			String url, String read_by, String supported_by,
-			String date_presented, String update_date)
+			String url, String sinar_url, String read_by,
+			String supported_by, String date_presented,
+			String update_date)
 	{
 		ContentValues cv = new ContentValues();
 		cv.put(KEY_YEAR, year);
 		cv.put(KEY_BILL_ID, Long.toString(bill_id));
 		cv.put(KEY_STATUS_ID, Long.toString(status_id));
 		cv.put(KEY_URL, url);
+		cv.put(KEY_SINAR_URL, sinar_url);
 		cv.put(KEY_READ_BY, read_by);
 		cv.put(KEY_SUPPORTED_BY, supported_by);
 		cv.put(KEY_DATE_PRESENTED, date_presented);
@@ -367,8 +372,8 @@ public class DbAdapter
 				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
 				KEY_LONG_NAME + ", " + key_status + " AS " +
 				KEY_STATUS + ", " + KEY_YEAR + ", " + KEY_URL + ", " +
-				KEY_NAME + ", " + KEY_DATE_PRESENTED + ", " +
-				KEY_READ_BY + ", " + KEY_SUPPORTED_BY +
+				KEY_SINAR_URL + ", " + KEY_NAME + ", " +
+				KEY_DATE_PRESENTED + ", " + KEY_READ_BY + ", " + KEY_SUPPORTED_BY +
 				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
 				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +
 				TABLE_BILLS + "." + KEY_ROWID + " JOIN " +

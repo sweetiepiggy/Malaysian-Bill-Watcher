@@ -124,6 +124,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		private String year = "";
 		private String status = "";
 		private String url = "";
+		private String sinar_url = "";
 		private String name = "";
 		private String read_by = "";
 		private String supported_by = "";
@@ -169,6 +170,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 					year = "";
 					status = "";
 					url = "";
+					sinar_url = "";
 					name = "";
 					read_by = "";
 					supported_by = "";
@@ -181,6 +183,8 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 						parse_description(cur_chars);
 					} else if (local_name.equalsIgnoreCase("pubDate")) {
 						update_date = format_date(strip_ws(new String(cur_chars)));
+					} else if (local_name.equalsIgnoreCase("link")) {
+						sinar_url = strip_ws(new String(cur_chars));
 					}
 				}
 				cur_chars = "";
@@ -283,7 +287,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			dbHelper.open_readwrite(mCtx);
 
 			dbHelper.create_bill_rev(long_name, year, status, url,
-					name, read_by, supported_by,
+					sinar_url, name, read_by, supported_by,
 					date_presented, update_date);
 
 			dbHelper.close();
