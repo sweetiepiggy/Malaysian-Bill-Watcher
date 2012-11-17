@@ -87,7 +87,6 @@ public class SearchActivity extends Activity
 		m_before_day = cal.get(Calendar.DAY_OF_MONTH);
 
 		Cursor c = mDbHelper.fetch_first_update();
-		startManagingCursor(c);
 		if (c.moveToFirst()) {
 			/* TODO: check that correct number of columns are returned */
 			m_after_year = c.getInt(1);
@@ -98,6 +97,7 @@ public class SearchActivity extends Activity
 			m_after_month = m_before_month;
 			m_after_day = m_before_day;
 		}
+		c.close();
 
 		update_date_label(R.id.before_date_button, m_before_year, m_before_month,
 				m_before_day);

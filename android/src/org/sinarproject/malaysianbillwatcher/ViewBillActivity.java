@@ -59,27 +59,20 @@ public class ViewBillActivity extends Activity {
 		mDbHelper.open(this);
 
 		Cursor c = mDbHelper.fetch_bill(mRowId);
-		startManagingCursor(c);
 		if (c.moveToFirst()) {
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
-			((TextView) findViewById(R.id.long_name)).setText(long_name);
+			String name = c.getString(c.getColumnIndex(DbAdapter.KEY_NAME));
+			String year = c.getString(c.getColumnIndex(DbAdapter.KEY_YEAR));
+			String status = c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS));
+			String date_presented = c.getString(c.getColumnIndex(DbAdapter.KEY_DATE_PRESENTED));
+			String read_by = c.getString(c.getColumnIndex(DbAdapter.KEY_READ_BY));
+			String supported_by = c.getString(c.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
+			String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
 
-			Cursor c_rev = mDbHelper.fetch_revs(long_name);
-			startManagingCursor(c_rev);
-			if (c_rev.moveToFirst()) {
-				String name = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_NAME));
-				String year = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_YEAR));
-				String status = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_STATUS));
-				String date_presented = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_DATE_PRESENTED));
-				String read_by = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_READ_BY));
-				String supported_by = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
-				String url = c_rev.getString(c_rev.getColumnIndex(DbAdapter.KEY_URL));
-
-				print_rev(name, year, status, date_presented,
-						read_by, supported_by, url);
-			}
-			//} while (c_rev.moveToNext());
+			print_rev(long_name, name, year, status, date_presented,
+					read_by, supported_by, url);
 		}
+		c.close();
 	}
 
 	@Override
@@ -114,10 +107,11 @@ public class ViewBillActivity extends Activity {
 		});
 	}
 
-	private void print_rev(String name, String year, String status,
-			String date_presented, String read_by,
+	private void print_rev(String long_name, String name, String year,
+			String status, String date_presented, String read_by,
 			String supported_by, final String url)
 	{
+		TextView long_name_view = (TextView) findViewById(R.id.long_name);
 		TextView name_view = (TextView) findViewById(R.id.name);
 		TextView year_view = (TextView) findViewById(R.id.year);
 		TextView status_view = (TextView) findViewById(R.id.status);
@@ -127,6 +121,7 @@ public class ViewBillActivity extends Activity {
 		TextView link_view = (TextView) findViewById(R.id.link);
 		Button view_bill_button = (Button) findViewById(R.id.view_bill);
 
+		long_name_view.setText(long_name);
 		name_view.setText(name);
 		year_view.setText(year);
 		status_view.setText(status);

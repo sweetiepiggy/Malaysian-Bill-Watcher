@@ -188,6 +188,7 @@ public class DbAdapter
 			ret =  mDbHelper.mDb.insert(DATABASE_TABLE, null,
 				initial_values);
 		}
+		c.close();
 
 		return ret;
 	}
@@ -259,7 +260,9 @@ public class DbAdapter
 	public Cursor fetch_bill(long id)
 	{
 		return mDbHelper.mDb.query(DATABASE_TABLE,
-				new String[] {KEY_URL, KEY_LONG_NAME, KEY_STATUS, KEY_YEAR, KEY_NAME},
+				new String[] {KEY_URL, KEY_LONG_NAME, KEY_STATUS,
+					KEY_YEAR, KEY_NAME, KEY_DATE_PRESENTED,
+					KEY_READ_BY, KEY_SUPPORTED_BY},
 				KEY_ROWID + " = ?", new String[] {Long.toString(id)},
 				null, null, null, null);
 	}
