@@ -111,7 +111,5 @@ public class MalaysianBillWatcherActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-
 }
 

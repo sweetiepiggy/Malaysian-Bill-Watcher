@@ -26,8 +26,10 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,6 +39,7 @@ import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
 	DbAdapter mDbHelper;
+	Cursor mCursor;
 
 	private class BrowseBillListAdapter extends ResourceCursorAdapter {
 		public BrowseBillListAdapter(Context context, Cursor c) {
@@ -107,10 +110,10 @@ public class BrowseActivity extends ListActivity {
 	private void fill_data(String bill_name, String status,
 			Calendar after_date, Calendar before_date)
 	{
-		Cursor c = mDbHelper.fetch_revs(bill_name, status, after_date,
+		mCursor = mDbHelper.fetch_revs(bill_name, status, after_date,
 				before_date);
-		startManagingCursor(c);
-		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, c);
+		startManagingCursor(mCursor);
+		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, mCursor);
 		setListAdapter(revs);
 	}
 
@@ -128,6 +131,35 @@ public class BrowseActivity extends ListActivity {
 				startActivity(intent);
 			}
 		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.browse_options, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		/* TODO: don't run in main thread */
+		/* TODO: refresh row colors */
+		case R.id.mark_all_read:
+			if (mCursor.moveToFirst()) do {
+				long id = mCursor.getInt(mCursor.getColumnIndex(DbAdapter.KEY_ROWID));
+				mDbHelper.set_read(id, true);
+			} while (mCursor.moveToNext());
+			return true;
+		case R.id.mark_all_unread:
+			if (mCursor.moveToFirst()) do {
+				long id = mCursor.getInt(mCursor.getColumnIndex(DbAdapter.KEY_ROWID));
+				mDbHelper.set_read(id, false);
+			} while (mCursor.moveToNext());
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
 
