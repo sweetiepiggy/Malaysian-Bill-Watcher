@@ -45,8 +45,8 @@
 	<string name="link">Link</string>
 
 	<string name="mark_as_read">Tandakan sebagai sudah baca</string>
-	<string name="mark_all_read">Tandakan semua sebagai sudah dibaca</string>
-	<string name="mark_all_unread">Tandakan semua sebagai belum dibaca</string>
+	<string name="mark_all_read">Tanda semua sudah baca</string>
+	<string name="mark_all_unread">Tanda semua belum baca</string>
 
 	<string name="lang_code">ms</string>
 
