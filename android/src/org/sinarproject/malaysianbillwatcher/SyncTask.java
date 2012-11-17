@@ -141,7 +141,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			}
 			c.close();
 			dbHelper.close();
-//			Log.i(TAG, "last_update:[" + last_update + "]");
 		}
 
 		@Override
@@ -162,13 +161,10 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			if (!done) {
 				if (local_name.equalsIgnoreCase("item")) {
 					/* TODO: should use strftime() first? */
-//					Log.i(TAG, "last_update:[" + last_update + "]");
-//					Log.i(TAG, "update_date:[" + update_date + "]");
 					if (last_update.compareTo(update_date) < 0) {
 						update_db();
 					} else {
 						done = true;
-//						Log.i(TAG, "done updating");
 					}
 					in_item = false;
 					long_name = "";
@@ -181,9 +177,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 					date_presented = "";
 					update_date = "";
 				} else if (in_item) {
-					//Log.i(TAG, "local_name:[" + local_name + "]");
-					//Log.i(TAG, "cur_chars:[" + cur_chars + "]");
-
 					if (local_name.equalsIgnoreCase("title")) {
 						long_name = strip_ws(new String(cur_chars));
 					} else if (local_name.equalsIgnoreCase("description")) {
@@ -235,8 +228,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 		private String format_date(String date)
 		{
-			//Log.i(TAG, "in_date:[" + date + "]");
-
 			String[] fields = date.split("\\s+");
 
 			String ret;
@@ -249,11 +240,8 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 				String time = fields[4];
 				ret = year + "-" + month + "-" + day + " " + time;
 			} else {
-				//Log.i(TAG, "length:[" + fields.length + "]");
 				ret = date;
 			}
-
-			//Log.i(TAG, "out_date:[" + ret + "]");
 
 			return ret;
 		}
@@ -292,16 +280,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		private void update_db()
 		{
 			publishProgress(++bill_cnt);
-			//Log.i(TAG, "inserting new bill");
-			//Log.i(TAG, "long_name:[" + long_name + "]");
-			//Log.i(TAG, "year:[" + year + "]");
-			//Log.i(TAG, "status:[" + status + "]");
-			//Log.i(TAG, "url:[" + url + "]");
-			//Log.i(TAG, "name:[" + name + "]");
-			//Log.i(TAG, "read_by:[" + read_by + "]");
-			//Log.i(TAG, "supported_by:[" + supported_by + "]");
-			//Log.i(TAG, "date_presented:[" + date_presented + "]");
-			//Log.i(TAG, "update_date:[" + update_date + "]");
 
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(mCtx);

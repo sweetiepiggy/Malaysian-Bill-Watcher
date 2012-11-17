@@ -28,7 +28,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-//import android.util.Log;
 
 public class DbAdapter
 {
@@ -77,14 +76,11 @@ public class DbAdapter
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 			mCtx = context;
 			mAllowSync = allow_sync;
-			//Log.i(TAG, "DatabaseHelper constructor, version " + DATABASE_VERSION);
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
-			//Log.i(TAG, "creating database");
-			//Log.w(TAG, "destroying all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 			db.execSQL(DATABASE_CREATE);
 			if (mAllowSync) {
@@ -148,9 +144,7 @@ public class DbAdapter
 
 	private DbAdapter open(Context ctx, int perm, boolean allow_sync) throws SQLException
 	{
-		//Log.i(TAG, "new DatabaseHelper(ctx)");
 		mDbHelper = new DatabaseHelper(ctx, allow_sync);
-		//Log.i(TAG, "opening database with permission " + perm);
 		mDbHelper.open_database(perm);
 
 		return this;
@@ -226,14 +220,6 @@ public class DbAdapter
 		String before = df.format(before_date.getTime());
 		String after = df.format(after_date.getTime());
 
-//		Log.i(TAG, "fetch_bills:[" +
-//				KEY_LONG_NAME + " LIKE " + bill_name  + " AND " +
-//					"(" + KEY_STATUS + " = " + status + " OR \"\" = " + status + ") AND " +
-//					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") < " +
-//					"strftime(\"%s\", " + before + ") AND " +
-//					"strftime(\"%s\", " + KEY_UPDATE_DATE + ") > " +
-//					"strftime(\"%s\", " + after + ")" +
-//				" ORDER BY " + KEY_UPDATE_DATE + " DESC]");
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS, KEY_READ},
 				KEY_LONG_NAME + " LIKE ? AND " +
