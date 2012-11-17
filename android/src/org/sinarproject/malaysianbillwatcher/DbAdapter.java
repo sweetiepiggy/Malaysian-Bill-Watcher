@@ -311,6 +311,7 @@ public class DbAdapter
 		String after = df.format(after_date.getTime());
 		String key_status = KEY_STATUS + "_" +
 			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
+		String any = mDbHelper.mCtx.getResources().getString(R.string.any);
 
 		Cursor c = mDbHelper.mDb.rawQuery("UPDATE " + TABLE_REVS + " SET " +
 				KEY_READ + " = " + (read ? "1" : "0") +
@@ -324,10 +325,10 @@ public class DbAdapter
 				KEY_STATUS_ID + " == " + TABLE_STATUS + "." +
 				KEY_ROWID +
 				" WHERE " + KEY_LONG_NAME + " LIKE ? AND " +
-					"(" + key_status + " = ? OR \"\" = ?) AND " +
+					"(" + key_status + " = ? OR \"\" = ? OR \"" + any + "\" = ?) AND " +
 					KEY_UPDATE_DATE + " < " + "? AND " +
 					KEY_UPDATE_DATE + " > " + "?)",
-			new String[] {"%" + bill_name + "%", status,
+			new String[] {"%" + bill_name + "%", status, status,
 				status, before, after});
 
 		/* need to interact and close cursor in order for UPDATE to
@@ -344,6 +345,7 @@ public class DbAdapter
 		String after = df.format(after_date.getTime());
 		String key_status = KEY_STATUS + "_" +
 			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
+		String any = mDbHelper.mCtx.getResources().getString(R.string.any);
 
 		return mDbHelper.mDb.rawQuery("SELECT " + TABLE_REVS +
 				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
@@ -356,11 +358,11 @@ public class DbAdapter
 				KEY_STATUS_ID + " == " + TABLE_STATUS + "." +
 				KEY_ROWID +
 				" WHERE " + KEY_LONG_NAME + " LIKE ? AND " +
-					"(" + key_status + " = ? OR \"\" = ?) AND " +
+					"(" + key_status + " = ? OR \"\" = ? OR \"" + any + "\" = ?) AND " +
 					KEY_UPDATE_DATE + " < " + "? AND " +
 					KEY_UPDATE_DATE + " > " + "? " +
 				"ORDER BY strftime('%s', " + KEY_UPDATE_DATE + ") DESC",
-			new String[] {"%" + bill_name + "%", status,
+			new String[] {"%" + bill_name + "%", status, status,
 				status, before, after});
 	}
 

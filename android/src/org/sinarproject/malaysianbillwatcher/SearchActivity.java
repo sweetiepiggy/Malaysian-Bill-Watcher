@@ -19,6 +19,7 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -29,15 +30,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.inputmethod.EditorInfo;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -132,15 +133,20 @@ public class SearchActivity extends Activity
 
 	private void init_status_spinner()
 	{
+		ArrayList<String> stati = new ArrayList<String>();
+		stati.add(getResources().getString(R.string.any));
 		Cursor c = mDbHelper.fetch_status();
-		startManagingCursor(c);
-		SimpleCursorAdapter status = new SimpleCursorAdapter(this,
+		if (c.moveToFirst()) do {
+			stati.add(c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS)));
+		} while (c.moveToNext());
+		c.close();
+
+		ArrayAdapter status_adapter = new ArrayAdapter(this,
 				android.R.layout.simple_spinner_item,
-				c, new String[] {DbAdapter.KEY_STATUS},
-				new int[] {android.R.id.text1});
-		status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				stati.toArray());
+		status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		Spinner status_spinner = (Spinner) findViewById(R.id.status_spinner);
-		status_spinner.setAdapter(status);
+		status_spinner.setAdapter(status_adapter);
 
 		status_spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -148,7 +154,7 @@ public class SearchActivity extends Activity
 					View selected_item, int pos,
 					long id)
 			{
-				m_status = ((Cursor)parent.getItemAtPosition(pos)).getString(1);
+				m_status = (String) parent.getItemAtPosition(pos);
 			}
 
 			@Override
