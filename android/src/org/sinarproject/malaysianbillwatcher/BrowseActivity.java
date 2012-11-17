@@ -38,11 +38,14 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
-	DbAdapter mDbHelper;
-	String m_bill_name;
-	String m_status;
-	Calendar m_after_date;
-	Calendar m_before_date;
+	private DbAdapter mDbHelper;
+	private String m_bill_name;
+	private String m_status;
+	private Calendar m_after_date;
+	private Calendar m_before_date;
+
+	private int BG_COLOR_READ = 0x00000000;
+	private int BG_COLOR_UNREAD = 0x804671D5;
 
 	private class BrowseBillListAdapter extends ResourceCursorAdapter {
 		public BrowseBillListAdapter(Context context, Cursor c) {
@@ -62,7 +65,7 @@ public class BrowseActivity extends ListActivity {
 			text2.setText(status);
 
 			text1.setTextAppearance(context, android.R.style.TextAppearance_Large);
-			view.setBackgroundColor(read ? 0x00000000 : 0x804671D5);
+			view.setBackgroundColor(read ? BG_COLOR_READ : BG_COLOR_UNREAD);
 		}
 	}
 
@@ -136,24 +139,35 @@ public class BrowseActivity extends ListActivity {
 		});
 	}
 
+	private void update_row_colors(int color)
+	{
+		ListView lv = getListView();
+		int child_cnt = lv.getChildCount();
+		for (int i = 0; i < child_cnt; ++i) {
+			lv.getChildAt(i).setBackgroundColor(color);
+		}
+	}
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.browse_options, menu);
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
 		DbAdapter dbHelper;
 		switch (item.getItemId()) {
-		/* TODO: refresh row colors */
 		case R.id.mark_all_read:
 			dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(BrowseActivity.this);
 			dbHelper.set_read(true, m_bill_name, m_status,
 					m_after_date, m_before_date);
 			dbHelper.close();
+			update_row_colors(BG_COLOR_READ);
 			return true;
 		case R.id.mark_all_unread:
 			dbHelper = new DbAdapter();
@@ -161,10 +175,12 @@ public class BrowseActivity extends ListActivity {
 			dbHelper.set_read(false, m_bill_name, m_status,
 					m_after_date, m_before_date);
 			dbHelper.close();
+			update_row_colors(BG_COLOR_UNREAD);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 }
 
