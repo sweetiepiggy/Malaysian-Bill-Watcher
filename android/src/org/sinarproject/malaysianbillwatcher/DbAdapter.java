@@ -32,14 +32,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbAdapter
 {
 	private static final String ACCEPTED_EN = "Accepted";
-	private static final String ACCEPTED_MS = "Accepted";
-	private static final String ACCEPTED_ZH = "Accepted";
+	private static final String ACCEPTED_MS = "Diterima";
+	private static final String ACCEPTED_ZH = "被接纳";
 	private static final String SECOND_AND_THIRD_EN = "Second And Third Reading";
-	private static final String SECOND_AND_THIRD_MS = "Second And Third Reading";
-	private static final String SECOND_AND_THIRD_ZH = "Second And Third Reading";
+	private static final String SECOND_AND_THIRD_MS = "Bacaan Kedua dan Ketiga";
+	private static final String SECOND_AND_THIRD_ZH = "第二次和第三次宣读";
 	private static final String WITHDRAWN_EN = "Withdrawn";
-	private static final String WITHDRAWN_MS = "Withdrawn";
-	private static final String WITHDRAWN_ZH = "Withdrawn";
+	private static final String WITHDRAWN_MS = "Ditarik Balik";
+	private static final String WITHDRAWN_ZH = "撤回";
 
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_LONG_NAME = "long_name";
