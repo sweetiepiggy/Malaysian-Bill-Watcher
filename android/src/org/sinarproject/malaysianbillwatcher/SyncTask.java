@@ -30,13 +30,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-//import android.util.Log;
 import android.widget.Toast;
 
-public class SyncTask extends AsyncTask<Void, Void, Void>
+public class SyncTask extends AsyncTask<Void, Integer, Void>
 {
 	private final String TAG = "AsyncTask";
 
@@ -45,10 +45,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 	private Context mCtx;
 	private int bill_cnt = 0;
+	private ProgressDialog mProgressDialog;
 
 	public SyncTask(Context ctx)
 	{
 		mCtx = ctx;
+		mProgressDialog = new ProgressDialog(mCtx);
 	}
 
 	@Override
@@ -64,6 +66,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 			RssHandler rss_handler = new RssHandler();
 			xr.setContentHandler(rss_handler);
 			xr.parse(new InputSource(url.openStream()));
+			publishProgress(100);
 		} catch (Exception e) {
 			throw new Error(e);
 		}
@@ -72,8 +75,29 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 	}
 
 	@Override
+	protected void onPreExecute()
+	{
+		super.onPreExecute();
+		if (mProgressDialog != null) {
+			mProgressDialog.setMessage(mCtx.getResources().getString(R.string.syncing));
+			mProgressDialog.setIndeterminate(false);
+			mProgressDialog.setMax(100);
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setProgress(0);
+			mProgressDialog.show();
+		}
+	}
+
+	@Override
 	protected void onPostExecute(Void result)
 	{
+		if (mProgressDialog != null) {
+			try {
+				mProgressDialog.dismiss();
+			/* view might no longer be attached to window manager */
+			} catch (IllegalArgumentException e) {
+			}
+		}
 		Toast.makeText(mCtx,
 				Integer.toString(bill_cnt) + " " +
 				mCtx.getResources().getString(R.string.updates_found),
@@ -81,8 +105,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 	}
 
 	@Override
-	protected void onProgressUpdate(Void... values)
+	protected void onProgressUpdate(Integer... values)
 	{
+		super.onProgressUpdate(values);
+		if (mProgressDialog != null) {
+			mProgressDialog.setProgress(values[0]);
+		}
 	}
 
 	private class RssHandler extends DefaultHandler
@@ -263,7 +291,7 @@ public class SyncTask extends AsyncTask<Void, Void, Void>
 
 		private void update_db()
 		{
-			++bill_cnt;
+			publishProgress(++bill_cnt);
 			//Log.i(TAG, "inserting new bill");
 			//Log.i(TAG, "long_name:[" + long_name + "]");
 			//Log.i(TAG, "year:[" + year + "]");

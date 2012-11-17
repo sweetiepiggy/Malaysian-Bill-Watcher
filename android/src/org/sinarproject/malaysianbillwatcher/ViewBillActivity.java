@@ -103,12 +103,12 @@ public class ViewBillActivity extends Activity {
 					need_reopen = true;
 				}
 				mDbHelper = new DbAdapter();
-				mDbHelper.open_readwrite(getApplicationContext());
+				mDbHelper.open_readwrite(ViewBillActivity.this);
 				mDbHelper.set_read(mRowId, is_checked);
 				mDbHelper.close();
 
 				if (need_reopen) {
-					mDbHelper.open(getApplicationContext());
+					mDbHelper.open(ViewBillActivity.this);
 				}
 			}
 		});

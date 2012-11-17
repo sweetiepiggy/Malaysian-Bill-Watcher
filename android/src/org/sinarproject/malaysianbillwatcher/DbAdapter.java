@@ -29,7 +29,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 //import android.util.Log;
-import android.widget.Toast;
 
 public class DbAdapter
 {
@@ -91,7 +90,6 @@ public class DbAdapter
 			if (mAllowSync) {
 				SyncTask sync = new SyncTask(mCtx);
 				sync.execute();
-				Toast.makeText(mCtx, R.string.syncing, Toast.LENGTH_SHORT).show();
 			}
 		}
 

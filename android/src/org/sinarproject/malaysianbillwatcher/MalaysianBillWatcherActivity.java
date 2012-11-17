@@ -21,6 +21,8 @@ package org.sinarproject.malaysianbillwatcher;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,7 +30,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MalaysianBillWatcherActivity extends Activity {
 	private static final String SOURCE_URL = "https://github.com/sweetiepiggy/Malaysian-Bill-Watcher/tree/sp";
@@ -37,8 +38,21 @@ public class MalaysianBillWatcherActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
+		init();
+		try {
+			/* open database only to sync if it has not been created yet */
+			DbAdapter dbHelper = new DbAdapter();
+			dbHelper.open_readwrite(this);
+			dbHelper.close();
+		/* database might be locked when trying to open it read/write */
+		} catch (SQLiteException e) {
+		}
+	}
+
+	private void init()
+	{
+		setContentView(R.layout.main);
 		Button browse = (Button) findViewById(R.id.browse);
 		browse.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
@@ -61,16 +75,17 @@ public class MalaysianBillWatcherActivity extends Activity {
 		sync.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
-				SyncTask sync = new SyncTask(getApplicationContext());
+				SyncTask sync = new SyncTask(MalaysianBillWatcherActivity.this);
 				sync.execute();
-				Toast.makeText(getApplicationContext(), R.string.syncing, Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
 
-		/* open database only to sync if it has not been created yet */
-		DbAdapter dbHelper = new DbAdapter();
-		dbHelper.open(getApplicationContext());
-		dbHelper.close();
+	@Override
+	public void onConfigurationChanged(Configuration new_cfg) {
+		super.onConfigurationChanged(new_cfg);
+
+		init();
 	}
 
 	@Override
