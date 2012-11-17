@@ -377,10 +377,14 @@ public class DbAdapter
 	{
 		String key_status = KEY_STATUS + "_" +
 			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
-		return mDbHelper.mDb.query(true, TABLE_STATUS, new String[] {KEY_ROWID,
-					key_status + " AS " + KEY_STATUS},
-				"length(" + key_status + ") != 0", null,
-				key_status, null, key_status + " ASC", null);
+		return mDbHelper.mDb.rawQuery("SELECT DISTINCT " + TABLE_REVS +
+				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " + key_status + " AS " + KEY_STATUS +
+				" FROM " + TABLE_REVS + " JOIN " + TABLE_STATUS +
+				" ON " + TABLE_REVS + "." + KEY_STATUS_ID + " == " +
+				TABLE_STATUS + "." + KEY_ROWID +
+				" GROUP BY " + key_status +
+				" ORDER BY " + key_status + " ASC",
+			null);
 	}
 }
 
