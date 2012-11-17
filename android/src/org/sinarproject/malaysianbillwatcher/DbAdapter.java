@@ -210,7 +210,8 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_LONG_NAME, KEY_STATUS},
 				null, null, null, null,
-				KEY_UPDATE_DATE + " DESC ", null);
+				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
+				null);
 	}
 
 	public Cursor fetch_bills(String bill_name, String status,
@@ -229,7 +230,8 @@ public class DbAdapter
 				new String[] {"%" + bill_name + "%", status,
 					status, before, after},
 				null, null,
-				KEY_UPDATE_DATE + " DESC", null);
+				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
+				null);
 	}
 
 	public Cursor fetch_bill(String long_name, String name)
@@ -250,7 +252,8 @@ public class DbAdapter
 					KEY_READ_BY, KEY_SUPPORTED_BY},
 				KEY_LONG_NAME + " = ?", new String[] {long_name},
 				null, null,
-				KEY_UPDATE_DATE + " DESC ", null);
+				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC ",
+				null);
 	}
 
 	public Cursor fetch_bill(long id)
@@ -266,7 +269,8 @@ public class DbAdapter
 		return mDbHelper.mDb.query(DATABASE_TABLE,
 				new String[] {KEY_ROWID, KEY_UPDATE_DATE},
 				null, null, null, null,
-				KEY_UPDATE_DATE + " DESC LIMIT 1", null);
+				"strftime('%s', " + KEY_UPDATE_DATE + ") DESC LIMIT 1",
+				null);
 	}
 
 	public Cursor fetch_first_update()
