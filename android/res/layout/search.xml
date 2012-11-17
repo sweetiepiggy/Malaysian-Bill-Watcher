@@ -66,11 +66,11 @@
 			<Button
 				android:id="@+id/after_date_button"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
+				android:layout_height="fill_parent" />
 			<Button
 				android:id="@+id/before_date_button"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
+				android:layout_height="fill_parent" />
 		</LinearLayout>
 
 		<Button
