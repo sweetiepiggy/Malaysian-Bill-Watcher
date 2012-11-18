@@ -33,7 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
-	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?url=";
+	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?embedded=true&url=";
 	private DbAdapter mDbHelper;
 	private Long mRowId;
 	private static final String TWITTER_ADDR = "@sinarproject";
