@@ -111,7 +111,7 @@ public class ViewBillActivity extends Activity {
 		((TextView) findViewById(R.id.date_presented)).setText(date_presented);
 		((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
 		((TextView) findViewById(R.id.supported_by)).setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
-		((TextView) findViewById(R.id.link)).setText(url.replace(" ", "%20"));
+		((TextView) findViewById(R.id.link)).setText(sinar_url.replace(" ", "%20"));
 
 		Button view_bill_button = (Button) findViewById(R.id.view_bill);
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
