@@ -120,7 +120,18 @@ public class ViewBillActivity extends Activity {
 		view_bill_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
-				view_pdf(url);
+				String wrapper_url = url.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
+				String encoded_url = Uri.encode(url).replace("+", "%20");
+				view_url(wrapper_url + encoded_url);
+			}
+		});
+
+		Button download_button = (Button) findViewById(R.id.download);
+		download_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v)
+			{
+				String encoded_url = url.replace(" ", "%20");
+				view_url(ARCHIVE_URL + encoded_url);
 			}
 		});
 
@@ -133,14 +144,13 @@ public class ViewBillActivity extends Activity {
 		});
 	}
 
-	private void view_pdf(String uri)
+	private void view_url(String url)
 	{
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		String wrapper_url = uri.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
-		String encoded_uri = Uri.encode(uri).replace("+", "%20");
-		intent.setDataAndType(Uri.parse(wrapper_url + encoded_uri), "text/html");
+		intent.setDataAndType(Uri.parse(url), "text/html");
 		startActivity(Intent.createChooser(intent, null));
 	}
+
 
 	private void send_tweet(String long_name, String url)
 	{
