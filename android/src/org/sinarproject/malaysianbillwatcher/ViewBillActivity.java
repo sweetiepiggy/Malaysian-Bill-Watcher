@@ -22,6 +22,7 @@ package org.sinarproject.malaysianbillwatcher;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
@@ -53,10 +53,14 @@ public class ViewBillActivity extends Activity {
 		}
 		mRowId = b.getLong("row_id");
 
-		mDbHelper = new DbAdapter();
-		mDbHelper.open_readwrite(this);
-		mDbHelper.set_read(mRowId, true);
-		mDbHelper.close();
+		try {
+			mDbHelper = new DbAdapter();
+			mDbHelper.open_readwrite(this);
+			mDbHelper.set_read(mRowId, true);
+			mDbHelper.close();
+		/* database might be locked when trying to open it read/write */
+		} catch (SQLiteException e) {
+		}
 
 		init_checkbox();
 
@@ -95,10 +99,14 @@ public class ViewBillActivity extends Activity {
 
 		read_checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
-				DbAdapter dbHelper = new DbAdapter();
-				dbHelper.open_readwrite(ViewBillActivity.this);
-				dbHelper.set_read(mRowId, is_checked);
-				dbHelper.close();
+				try {
+					DbAdapter dbHelper = new DbAdapter();
+					dbHelper.open_readwrite(ViewBillActivity.this);
+					dbHelper.set_read(mRowId, is_checked);
+					dbHelper.close();
+				/* database might be locked when trying to open it read/write */
+				} catch (SQLiteException e) {
+				}
 			}
 		});
 	}

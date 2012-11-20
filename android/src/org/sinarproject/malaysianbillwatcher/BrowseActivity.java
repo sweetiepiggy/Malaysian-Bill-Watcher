@@ -26,6 +26,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -152,7 +153,7 @@ public class BrowseActivity extends ListActivity {
 	{
 		DbAdapter dbHelper;
 		int pos;
-		switch (item.getItemId()) {
+		try { switch (item.getItemId()) {
 		case R.id.mark_all_read:
 			dbHelper = new DbAdapter();
 			dbHelper.open_readwrite(BrowseActivity.this);
@@ -174,8 +175,10 @@ public class BrowseActivity extends ListActivity {
 			getListView().setSelection(pos);
 			return true;
 		default:
-			return super.onOptionsItemSelected(item);
+		/* database might be locked when trying to open it read/write */
+		} } catch (SQLiteException e) {
 		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

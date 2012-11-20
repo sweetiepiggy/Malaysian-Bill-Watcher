@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -283,14 +283,18 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		{
 			publishProgress(++bill_cnt);
 
-			DbAdapter dbHelper = new DbAdapter();
-			dbHelper.open_readwrite(mCtx);
+			try {
+				DbAdapter dbHelper = new DbAdapter();
+				dbHelper.open_readwrite(mCtx);
 
-			dbHelper.create_bill_rev(long_name, year, status, url,
-					sinar_url, name, read_by, supported_by,
-					date_presented, update_date);
+				dbHelper.create_bill_rev(long_name, year, status, url,
+						sinar_url, name, read_by, supported_by,
+						date_presented, update_date);
 
-			dbHelper.close();
+				dbHelper.close();
+			/* database might be locked when trying to open it read/write */
+			} catch (SQLiteException e) {
+			}
 		}
 
 		private String strip_ws(String s)
