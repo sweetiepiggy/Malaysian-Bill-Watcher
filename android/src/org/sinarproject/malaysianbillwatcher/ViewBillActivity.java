@@ -33,7 +33,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
-	private final String GOOGLE_DOCS_URL = "http://docs.google.com/viewer?embedded=true&url=";
+	private final String DOCS_URL = "http://docs.google.com/viewer?embedded=true&url=";
+	private final String CACHE_URL = "http://webcache.googleusercontent.com/search?q=cache:";
+	private final String ARCHIVE_URL = "http://liveweb.archive.org/";
+
 	private DbAdapter mDbHelper;
 	private Long mRowId;
 	private static final String TWITTER_ADDR = "@sinarproject";
@@ -130,11 +133,12 @@ public class ViewBillActivity extends Activity {
 		});
 	}
 
-	private void view_pdf(String uri_str)
+	private void view_pdf(String uri)
 	{
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		String encoded_uri = Uri.encode(uri_str).replace("+", "%20");
-		intent.setDataAndType(Uri.parse(GOOGLE_DOCS_URL + encoded_uri), "text/html");
+		String wrapper_url = uri.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
+		String encoded_uri = Uri.encode(uri).replace("+", "%20");
+		intent.setDataAndType(Uri.parse(wrapper_url + encoded_uri), "text/html");
 		startActivity(Intent.createChooser(intent, null));
 	}
 
