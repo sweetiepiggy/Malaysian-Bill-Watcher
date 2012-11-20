@@ -135,7 +135,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		public void startDocument()
 		{
 			DbAdapter dbHelper = new DbAdapter();
-			dbHelper.open_no_sync(mCtx);
+			dbHelper.open(mCtx);
 
 			m_last_update = dbHelper.get_last_update();
 
@@ -285,7 +285,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 			try {
 				DbAdapter dbHelper = new DbAdapter();
-				dbHelper.open_readwrite(mCtx);
+				dbHelper.open_readwrite(mCtx, false);
 
 				dbHelper.create_bill_rev(long_name, year, status, url,
 						sinar_url, name, read_by, supported_by,
