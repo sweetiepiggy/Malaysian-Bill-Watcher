@@ -21,7 +21,6 @@ package org.sinarproject.malaysianbillwatcher;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
@@ -79,13 +78,6 @@ public class MalaysianBillWatcherActivity extends Activity {
 				sync.execute();
 			}
 		});
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration new_cfg) {
-		super.onConfigurationChanged(new_cfg);
-
-		init();
 	}
 
 	@Override
