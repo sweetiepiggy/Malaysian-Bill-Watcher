@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -48,13 +49,16 @@ public class BrowseActivity extends ListActivity {
 	private static final int BG_COLOR_READ = 0x00000000;
 	private static final int BG_COLOR_UNREAD = 0x804671D5;
 
-	private class BrowseBillListAdapter extends ResourceCursorAdapter {
-		public BrowseBillListAdapter(Context context, Cursor c) {
+	private class BrowseBillListAdapter extends ResourceCursorAdapter
+	{
+		public BrowseBillListAdapter(Context context, Cursor c)
+		{
 			super(context, android.R.layout.two_line_list_item, c);
 		}
 
 		@Override
-		public void bindView(View view, Context context, Cursor c) {
+		public void bindView(View view, Context context, Cursor c)
+		{
 			TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 			TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
@@ -72,17 +76,29 @@ public class BrowseActivity extends ListActivity {
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 
-		Bundle b = getIntent().getExtras();
+		Intent intent = getIntent();
+		Bundle b = intent.getExtras();
 		m_bill_name = (b == null) ? "" : b.getString("bill_name");
 		m_status = (b == null) ? "" : b.getString("status");
+
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			m_bill_name = intent.getStringExtra(SearchManager.QUERY);
+			m_status = "";
+		}
 
 		final Calendar now = Calendar.getInstance();
 		m_after_date = new GregorianCalendar();
 		m_before_date = new GregorianCalendar();
-		if (b == null) {
+		if (b == null || !b.containsKey("after_year") ||
+				!b.containsKey("after_month") ||
+				!b.containsKey("after_day") ||
+				!b.containsKey("before_year") ||
+				!b.containsKey("before_month") ||
+				!b.containsKey("before_day")) {
 			m_after_date.set(1970, 0, 1, 0, 0);
 			m_before_date.set(now.get(Calendar.YEAR),
 					now.get(Calendar.MONTH),
@@ -107,7 +123,8 @@ public class BrowseActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		if (mDbHelper != null) {
 			mDbHelper.close();
 		}
