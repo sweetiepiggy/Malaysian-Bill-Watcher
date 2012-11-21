@@ -145,7 +145,7 @@
 				android:id="@+id/download"
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent"
-				android:drawableLeft="@drawable/download"
+				android:drawableLeft="@android:drawable/stat_sys_download"
 				android:text="@string/download" />
 			<Button xmlns:android="http://schemas.android.com/apk/res/android"
 				android:id="@+id/tweet"
