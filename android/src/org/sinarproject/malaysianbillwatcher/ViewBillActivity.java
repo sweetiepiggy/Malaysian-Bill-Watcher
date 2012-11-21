@@ -52,6 +52,7 @@ public class ViewBillActivity extends Activity {
 			b = new Bundle();
 		}
 		mRowId = b.getLong("row_id");
+		android.util.Log.i("ViewBill", "row_id:[" + mRowId + "]");
 
 		try {
 			mDbHelper = new DbAdapter();

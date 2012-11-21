@@ -30,10 +30,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
 public class SyncTask extends AsyncTask<Void, Integer, Void>
@@ -161,10 +167,13 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 				if (local_name.equalsIgnoreCase("item")) {
 					/* TODO: should use strftime() first? */
 					if (m_last_update.compareTo(update_date) < 0) {
-						update_db();
+						long row_id = update_db();
+						android.util.Log.i("Sync", "set row_id:[" + row_id + "]");
+						send_notification(long_name, row_id);
 					} else {
 						done = true;
 					}
+
 					in_item = false;
 					long_name = "";
 					year = "";
@@ -279,15 +288,16 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			return month_name;
 		}
 
-		private void update_db()
+		private long update_db()
 		{
 			publishProgress(++bill_cnt);
+			long row_id = -1;
 
 			try {
 				DbAdapter dbHelper = new DbAdapter();
 				dbHelper.open_readwrite(mCtx, false);
 
-				dbHelper.create_bill_rev(long_name, year, status, url,
+				row_id = dbHelper.create_bill_rev(long_name, year, status, url,
 						sinar_url, name, read_by, supported_by,
 						date_presented, update_date);
 
@@ -295,6 +305,49 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			/* database might be locked when trying to open it read/write */
 			} catch (SQLiteException e) {
 			}
+
+			return row_id;
+		}
+
+		public void send_notification(String long_name, long row_id)
+		{
+			NotificationCompat.Builder builder =
+				new NotificationCompat.Builder(mCtx)
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setContentTitle("Bill Watcher")
+					.setContentText(long_name);
+
+			android.util.Log.i("Sync", "row_id:[" + row_id + "]");
+			android.util.Log.i("Sync", "long_name:[" + long_name + "]");
+			Intent intent = (row_id == -1) ?
+				new Intent(mCtx, MalaysianBillWatcherActivity.class) :
+				new Intent(mCtx, ViewBillActivity.class);
+
+			if (row_id != -1) {
+				Bundle b = new Bundle();
+				b.putLong("row_id", row_id);
+				intent.putExtras(b);
+				android.util.Log.i("Sync", "putting row_id:[" + row_id + "]");
+			}
+
+			TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
+
+			if (row_id != -1) {
+				Intent parent_intent = new Intent(mCtx, MalaysianBillWatcherActivity.class);
+				sb.addNextIntent(parent_intent);
+			}
+			//sb.addParentStack(ViewBillActivity.class);
+
+			/* adds the Intent that starts the Activity to the top of the stack */
+			sb.addNextIntent(intent);
+			PendingIntent pi = sb.getPendingIntent(
+				0, PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(pi);
+			NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+			/* id allows you to update the notification later on */
+			int id = 0;
+			nm.notify(id, builder.build());
 		}
 
 		private String strip_ws(String s)
