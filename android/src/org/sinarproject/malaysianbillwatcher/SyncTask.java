@@ -168,7 +168,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 					/* TODO: should use strftime() first? */
 					if (m_last_update.compareTo(update_date) < 0) {
 						long row_id = update_db();
-						android.util.Log.i("Sync", "set row_id:[" + row_id + "]");
 						send_notification(long_name, row_id);
 					} else {
 						done = true;
@@ -317,8 +316,6 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 					.setContentTitle("Bill Watcher")
 					.setContentText(long_name);
 
-			android.util.Log.i("Sync", "row_id:[" + row_id + "]");
-			android.util.Log.i("Sync", "long_name:[" + long_name + "]");
 			Intent intent = (row_id == -1) ?
 				new Intent(mCtx, MalaysianBillWatcherActivity.class) :
 				new Intent(mCtx, ViewBillActivity.class);
@@ -327,16 +324,13 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 				Bundle b = new Bundle();
 				b.putLong("row_id", row_id);
 				intent.putExtras(b);
-				android.util.Log.i("Sync", "putting row_id:[" + row_id + "]");
 			}
 
 			TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
 
-			if (row_id != -1) {
-				Intent parent_intent = new Intent(mCtx, MalaysianBillWatcherActivity.class);
-				sb.addNextIntent(parent_intent);
-			}
-			//sb.addParentStack(ViewBillActivity.class);
+			sb.addParentStack((row_id == -1) ?
+					MalaysianBillWatcherActivity.class :
+					ViewBillActivity.class);
 
 			/* adds the Intent that starts the Activity to the top of the stack */
 			sb.addNextIntent(intent);

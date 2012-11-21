@@ -20,7 +20,12 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="ViewBillActivity"></activity>
+		<activity android:name="ViewBillActivity">
+			<!-- extras end up NULL if this is used?? -->
+			<!--<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".MalaysianBillWatcherActivity" />-->
+		</activity>
 		<activity android:name="BrowseActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
