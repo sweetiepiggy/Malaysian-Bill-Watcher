@@ -22,7 +22,7 @@
 
 <resources>
 	<string name="app_name">M\'sian Bill Watcher</string>
-	<string name="view_bill">View PDF</string>
+	<string name="view_bill">View</string>
 	<string name="download">Download</string>
 	<string name="tweet">Tweet</string>
 	<string name="browse_bills">Browse\nBills</string>
