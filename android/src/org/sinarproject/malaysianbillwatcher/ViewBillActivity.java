@@ -120,36 +120,44 @@ public class ViewBillActivity extends Activity {
 		((TextView) findViewById(R.id.year)).setText(year);
 		((TextView) findViewById(R.id.status)).setText(status);
 		((TextView) findViewById(R.id.date_presented)).setText(date_presented);
-		((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
-		((TextView) findViewById(R.id.supported_by)).setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
-		((TextView) findViewById(R.id.link)).setText(sinar_url.replace(" ", "%20"));
+		if (read_by != null) {
+			((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
+		}
+		if (supported_by != null) {
+			((TextView) findViewById(R.id.supported_by)).setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
+		}
+		if (sinar_url != null) {
+			((TextView) findViewById(R.id.link)).setText(sinar_url.replace(" ", "%20"));
 
-		Button view_bill_button = (Button) findViewById(R.id.view_bill);
-		view_bill_button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				String wrapper_url = url.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
-				String encoded_url = Uri.encode(url).replace("+", "%20");
-				view_url(wrapper_url + encoded_url);
-			}
-		});
+			Button tweet_button = (Button) findViewById(R.id.tweet);
+			tweet_button.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v)
+				{
+					send_tweet(long_name, sinar_url);
+				}
+			});
+		}
 
-		Button download_button = (Button) findViewById(R.id.download);
-		download_button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				String encoded_url = url.replace(" ", "%20");
-				view_url(ARCHIVE_URL + encoded_url);
-			}
-		});
+		if (url != null) {
+			Button view_bill_button = (Button) findViewById(R.id.view_bill);
+			view_bill_button.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v)
+				{
+					String wrapper_url = url.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
+					String encoded_url = Uri.encode(url).replace("+", "%20");
+					view_url(wrapper_url + encoded_url);
+				}
+			});
 
-		Button tweet_button = (Button) findViewById(R.id.tweet);
-		tweet_button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				send_tweet(long_name, sinar_url);
-			}
-		});
+			Button download_button = (Button) findViewById(R.id.download);
+			download_button.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v)
+				{
+					String encoded_url = url.replace(" ", "%20");
+					view_url(ARCHIVE_URL + encoded_url);
+				}
+			});
+		}
 	}
 
 	private void view_url(String url)

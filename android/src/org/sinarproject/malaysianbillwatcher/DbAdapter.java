@@ -216,24 +216,22 @@ public class DbAdapter
 	}
 
 	/** @return TABLE_REVS row_id or -1 if failed */
-	public long create_bill_rev(String long_name, String year,
-			String status, String url, String sinar_url,
-			String name, String read_by, String supported_by,
-			String date_presented, String update_date)
+	public long create_bill_rev(ContentValues cv)
 	{
-		long bill_id = create_bill(long_name, name);
+		long bill_id = create_bill(cv.getAsString(KEY_LONG_NAME), cv.getAsString(KEY_NAME));
 		if (bill_id == -1) {
 			return -1;
 		}
 
-		long status_id = fetch_or_create_status(status);
+		long status_id = fetch_or_create_status(cv.getAsString(KEY_STATUS));
 		if (status_id == -1) {
 			return -1;
 		}
 
-		return create_rev(year, bill_id, status_id, url, sinar_url,
-				read_by, supported_by, date_presented,
-				update_date);
+		return create_rev(cv.getAsString(KEY_YEAR), bill_id, status_id,
+				cv.getAsString(KEY_URL), cv.getAsString(KEY_SINAR_URL),
+				cv.getAsString(KEY_READ_BY), cv.getAsString(KEY_SUPPORTED_BY),
+				cv.getAsString(KEY_DATE_PRESENTED), cv.getAsString(KEY_UPDATE_DATE));
 	}
 
 	/** @return row_id or -1 if failed */
@@ -252,16 +250,29 @@ public class DbAdapter
 			String update_date)
 	{
 		ContentValues cv = new ContentValues();
-		cv.put(KEY_YEAR, year);
 		cv.put(KEY_BILL_ID, Long.toString(bill_id));
 		cv.put(KEY_STATUS_ID, Long.toString(status_id));
-		cv.put(KEY_URL, url);
-		cv.put(KEY_SINAR_URL, sinar_url);
-		cv.put(KEY_READ_BY, read_by);
-		cv.put(KEY_SUPPORTED_BY, supported_by);
-		cv.put(KEY_DATE_PRESENTED, date_presented);
-		cv.put(KEY_UPDATE_DATE, update_date);
-		cv.put(KEY_READ, 0);
+		if (year != null && year.length() != 0) {
+			cv.put(KEY_YEAR, year);
+		}
+		if (url != null && url.length() != 0) {
+			cv.put(KEY_URL, url);
+		}
+		if (sinar_url != null && sinar_url.length() != 0) {
+			cv.put(KEY_SINAR_URL, sinar_url);
+		}
+		if (read_by != null && read_by.length() != 0) {
+			cv.put(KEY_READ_BY, read_by);
+		}
+		if (supported_by != null && supported_by.length() != 0) {
+			cv.put(KEY_SUPPORTED_BY, supported_by);
+		}
+		if (date_presented != null && date_presented.length() != 0) {
+			cv.put(KEY_DATE_PRESENTED, date_presented);
+		}
+		if (update_date != null && update_date.length() != 0) {
+			cv.put(KEY_UPDATE_DATE, update_date);
+		}
 
 		return mDbHelper.mDb.insert(TABLE_REVS, null, cv);
 	}

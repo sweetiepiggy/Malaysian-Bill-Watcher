@@ -20,22 +20,21 @@
 package org.sinarproject.malaysianbillwatcher;
 
 import java.net.URL;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -50,7 +49,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
 
 	private Context mCtx;
-	private int bill_cnt = 0;
+	private int mAddedBills = 0;
 	private ProgressDialog mProgressDialog;
 
 	public SyncTask(Context ctx)
@@ -69,10 +68,20 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 			URL url = new URL(BILLWATCHER_URL);
 
-			RssHandler rss_handler = new RssHandler();
+			DbAdapter dbHelper = new DbAdapter();
+			dbHelper.open(mCtx);
+			String lastUpdate = dbHelper.get_last_update();
+			dbHelper.close();
+
+			RssHandler rss_handler = new RssHandler(this, lastUpdate, 25);
 			xr.setContentHandler(rss_handler);
 			xr.parse(new InputSource(url.openStream()));
+
+			LinkedList<ContentValues> bills = rss_handler.getBills();
+			mAddedBills = updateDb(bills, 25, 100);
+
 			publishProgress(100);
+		/* TODO: properly handle exceptions */
 		} catch (Exception e) {
 			throw new Error(e);
 		}
@@ -105,7 +114,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			}
 		}
 		Toast.makeText(mCtx,
-				Integer.toString(bill_cnt) + " " +
+				Integer.toString(mAddedBills) + " " +
 				mCtx.getResources().getString(R.string.updates_found),
 				Toast.LENGTH_SHORT).show();
 	}
@@ -119,236 +128,66 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		}
 	}
 
-	private class RssHandler extends DefaultHandler
+	public void updateProgress(int progress)
 	{
-		private Boolean done = false;
-		private Boolean in_item = false;
-		private String cur_chars = "";
-		private String m_last_update = "";
-
-		private String long_name = "";
-		private String year = "";
-		private String status = "";
-		private String url = "";
-		private String sinar_url = "";
-		private String name = "";
-		private String read_by = "";
-		private String supported_by = "";
-		private String date_presented = "";
-		private String update_date = "";
-
-		@Override
-		public void startDocument()
-		{
-			DbAdapter dbHelper = new DbAdapter();
-			dbHelper.open(mCtx);
-
-			m_last_update = dbHelper.get_last_update();
-
-			dbHelper.close();
-		}
-
-		@Override
-		public void startElement(String uri, String local_name, String q_name,
-				Attributes attr) throws SAXException
-		{
-			if (!done) {
-				if (local_name.equalsIgnoreCase("item")) {
-					in_item = true;
-				}
-			}
-		}
-
-		@Override
-		public void endElement(String uri, String local_name, String q_name)
-				throws SAXException
-		{
-			if (!done) {
-				if (local_name.equalsIgnoreCase("item")) {
-					/* TODO: should use strftime() first? */
-					if (m_last_update.compareTo(update_date) < 0) {
-						long row_id = update_db();
-						send_notification(long_name, row_id);
-					} else {
-						done = true;
-					}
-
-					in_item = false;
-					long_name = "";
-					year = "";
-					status = "";
-					url = "";
-					sinar_url = "";
-					name = "";
-					read_by = "";
-					supported_by = "";
-					date_presented = "";
-					update_date = "";
-				} else if (in_item) {
-					if (local_name.equalsIgnoreCase("title")) {
-						long_name = strip_ws(new String(cur_chars));
-					} else if (local_name.equalsIgnoreCase("description")) {
-						parse_description(cur_chars);
-					} else if (local_name.equalsIgnoreCase("pubDate")) {
-						update_date = format_date(strip_ws(new String(cur_chars)));
-					} else if (local_name.equalsIgnoreCase("link")) {
-						sinar_url = strip_ws(new String(cur_chars));
-					}
-				}
-				cur_chars = "";
-			}
-		}
-
-		@Override
-		public void characters(char[] ch, int start, int len) throws SAXException {
-			if (!done) {
-				cur_chars += new String(ch, start, len);
-			}
-		}
-
-		private void parse_description(String desc)
-		{
-			for (String line : desc.split("\n")) {
-				int idx = line.indexOf(':');
-				if (idx != -1 && idx < line.length() - 1) {
-					String key = line.substring(0, idx);
-					String val = line.substring(idx + 1);
-					key = strip_ws(key);
-					val = strip_ws(val);
-					if (!val.equals("None")) {
-						if (key.equalsIgnoreCase("year")) {
-							year = val;
-						} else if (key.equalsIgnoreCase("status")) {
-							status = val;
-						} else if (key.equalsIgnoreCase("url")) {
-							url = val;
-						} else if (key.equalsIgnoreCase("name")) {
-							name = val;
-						} else if (key.equalsIgnoreCase("read_by")) {
-							read_by = val;
-						} else if (key.equalsIgnoreCase("supported_by")) {
-							supported_by = val;
-						} else if (key.equalsIgnoreCase("date_presented")) {
-							date_presented = val;
-						}
-					}
-				}
-			}
-		}
-
-		private String format_date(String date)
-		{
-			String[] fields = date.split("\\s+");
-
-			String ret;
-
-			/* date looks like this: Sun, 04 Mar 2012 11:21:25 GMT */
-			if (fields.length == 6) {
-				String day = fields[1];
-				String month = month_name2num(fields[2]);
-				String year = fields[3];
-				String time = fields[4];
-				ret = year + "-" + month + "-" + day + " " + time;
-			} else {
-				ret = date;
-			}
-
-			return ret;
-		}
-
-		/* TODO: is there a library for this */
-		private String month_name2num(String month_name)
-		{
-			if (month_name.equals("Jan")) {
-				return "01";
-			} else if (month_name.equals("Feb")) {
-				return "02";
-			} else if (month_name.equals("Mar")) {
-				return "03";
-			} else if (month_name.equals("Apr")) {
-				return "04";
-			} else if (month_name.equals("May")) {
-				return "05";
-			} else if (month_name.equals("Jun")) {
-				return "06";
-			} else if (month_name.equals("Jul")) {
-				return "07";
-			} else if (month_name.equals("Aug")) {
-				return "08";
-			} else if (month_name.equals("Sep")) {
-				return "09";
-			} else if (month_name.equals("Oct")) {
-				return "10";
-			} else if (month_name.equals("Nov")) {
-				return "11";
-			} else if (month_name.equals("Dec")) {
-				return "12";
-			}
-			return month_name;
-		}
-
-		private long update_db()
-		{
-			publishProgress(++bill_cnt);
-			long row_id = -1;
-
-			try {
-				DbAdapter dbHelper = new DbAdapter();
-				dbHelper.open_readwrite(mCtx, false);
-
-				row_id = dbHelper.create_bill_rev(long_name, year, status, url,
-						sinar_url, name, read_by, supported_by,
-						date_presented, update_date);
-
-				dbHelper.close();
-			/* database might be locked when trying to open it read/write */
-			} catch (SQLiteException e) {
-			}
-
-			return row_id;
-		}
-
-		public void send_notification(String long_name, long row_id)
-		{
-			NotificationCompat.Builder builder =
-				new NotificationCompat.Builder(mCtx)
-					.setSmallIcon(R.drawable.ic_launcher)
-					.setContentTitle("Bill Watcher")
-					.setContentText(long_name);
-
-			Intent intent = (row_id == -1) ?
-				new Intent(mCtx, MalaysianBillWatcherActivity.class) :
-				new Intent(mCtx, ViewBillActivity.class);
-
-			if (row_id != -1) {
-				Bundle b = new Bundle();
-				b.putLong("row_id", row_id);
-				intent.putExtras(b);
-			}
-
-			TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
-
-			sb.addParentStack((row_id == -1) ?
-					MalaysianBillWatcherActivity.class :
-					ViewBillActivity.class);
-
-			/* adds the Intent that starts the Activity to the top of the stack */
-			sb.addNextIntent(intent);
-			PendingIntent pi = sb.getPendingIntent(
-				0, PendingIntent.FLAG_UPDATE_CURRENT);
-			builder.setContentIntent(pi);
-			NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
-
-			/* id allows you to update the notification later on */
-			int id = 0;
-			nm.notify(id, builder.build());
-		}
-
-		private String strip_ws(String s)
-		{
-			return s.replaceFirst("^\\s+", "").replaceFirst("\\s+$", "");
-		}
+		publishProgress(progress);
 	}
 
+	private int updateDb(LinkedList<ContentValues> bills, int progressOffset,
+			int maxProgress)
+	{
+		int billCnt = bills.size();
+		int addedBills = 0;
+
+		Iterator<ContentValues> itr = bills.listIterator();
+		DbAdapter dbHelper = new DbAdapter();
+		dbHelper.open_readwrite(mCtx, false);
+		while (itr.hasNext()) {
+			dbHelper.create_bill_rev(itr.next());
+			++addedBills;
+			publishProgress(java.lang.Math.min(maxProgress,
+						progressOffset +
+						(int)((maxProgress - progressOffset) *
+							(double) addedBills / billCnt)));
+		}
+		dbHelper.close();
+		return addedBills;
+	}
+
+	private void send_notification(String long_name, long row_id)
+	{
+		NotificationCompat.Builder builder =
+			new NotificationCompat.Builder(mCtx)
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle("Bill Watcher")
+				.setContentText(long_name);
+
+		Intent intent = (row_id == -1) ?
+			new Intent(mCtx, MalaysianBillWatcherActivity.class) :
+			new Intent(mCtx, ViewBillActivity.class);
+
+		if (row_id != -1) {
+			Bundle b = new Bundle();
+			b.putLong("row_id", row_id);
+			intent.putExtras(b);
+		}
+
+		TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
+
+		sb.addParentStack((row_id == -1) ?
+				MalaysianBillWatcherActivity.class :
+				ViewBillActivity.class);
+
+		/* adds the Intent that starts the Activity to the top of the stack */
+		sb.addNextIntent(intent);
+		PendingIntent pi = sb.getPendingIntent(
+			0, PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(pi);
+		NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		/* id allows you to update the notification later on */
+		int id = 0;
+		nm.notify(id, builder.build());
+	}
 }
 
