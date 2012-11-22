@@ -43,7 +43,7 @@ import android.widget.Toast;
 
 public class SyncTask extends AsyncTask<Void, Integer, Void>
 {
-	private final String TAG = "AsyncTask";
+	private final int MAX_NOTIFICATIONS = 3;
 
 	/* TODO: move to Constants.java */
 	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
@@ -79,6 +79,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 			LinkedList<ContentValues> bills = rss_handler.getBills();
 			mAddedBills = updateDb(bills, 25, 100);
+			send_notifications(bills);
 
 			publishProgress(100);
 		/* TODO: properly handle exceptions */
@@ -143,7 +144,9 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		DbAdapter dbHelper = new DbAdapter();
 		dbHelper.open_readwrite(mCtx, false);
 		while (itr.hasNext()) {
-			dbHelper.create_bill_rev(itr.next());
+			ContentValues cv = itr.next();
+			long row_id = dbHelper.create_bill_rev(cv);
+			cv.put(DbAdapter.KEY_ROWID, row_id);
 			++addedBills;
 			publishProgress(java.lang.Math.min(maxProgress,
 						progressOffset +
@@ -154,29 +157,38 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		return addedBills;
 	}
 
+	private void send_notifications(LinkedList<ContentValues> bills)
+	{
+		int billCnt = bills.size();
+		if (billCnt <= MAX_NOTIFICATIONS) {
+			Iterator<ContentValues> itr = bills.listIterator();
+			while (itr.hasNext()) {
+				ContentValues cv = itr.next();
+				send_notification(cv.getAsString(DbAdapter.KEY_LONG_NAME),
+						cv.getAsLong(DbAdapter.KEY_ROWID));
+			}
+		} else {
+			send_notification(billCnt);
+		}
+	}
+
 	private void send_notification(String long_name, long row_id)
 	{
 		NotificationCompat.Builder builder =
 			new NotificationCompat.Builder(mCtx)
 				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle("Bill Watcher")
+				.setContentTitle(mCtx.getResources().getString(R.string.app_name))
 				.setContentText(long_name);
 
-		Intent intent = (row_id == -1) ?
-			new Intent(mCtx, MalaysianBillWatcherActivity.class) :
-			new Intent(mCtx, ViewBillActivity.class);
+		Intent intent = new Intent(mCtx, ViewBillActivity.class);
 
-		if (row_id != -1) {
-			Bundle b = new Bundle();
-			b.putLong("row_id", row_id);
-			intent.putExtras(b);
-		}
+		Bundle b = new Bundle();
+		b.putLong("row_id", row_id);
+		intent.putExtras(b);
 
 		TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
 
-		sb.addParentStack((row_id == -1) ?
-				MalaysianBillWatcherActivity.class :
-				ViewBillActivity.class);
+		sb.addParentStack(ViewBillActivity.class);
 
 		/* adds the Intent that starts the Activity to the top of the stack */
 		sb.addNextIntent(intent);
@@ -185,9 +197,34 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		builder.setContentIntent(pi);
 		NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		/* id allows you to update the notification later on */
-		int id = 0;
-		nm.notify(id, builder.build());
+		nm.notify((int) row_id, builder.build());
+	}
+
+	private void send_notification(int billCnt)
+	{
+		String msg = Integer.toString(mAddedBills) + " " +
+			mCtx.getResources().getString(R.string.updates_found);
+
+		NotificationCompat.Builder builder =
+			new NotificationCompat.Builder(mCtx)
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(mCtx.getResources().getString(R.string.app_name))
+				.setContentText(msg);
+
+		Intent intent = new Intent(mCtx, BrowseActivity.class);
+
+		TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
+
+		sb.addParentStack(BrowseActivity.class);
+
+		/* adds the Intent that starts the Activity to the top of the stack */
+		sb.addNextIntent(intent);
+		PendingIntent pi = sb.getPendingIntent(
+			0, PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(pi);
+		NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		nm.notify(0, builder.build());
 	}
 }
 

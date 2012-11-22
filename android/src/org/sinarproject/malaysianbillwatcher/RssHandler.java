@@ -44,7 +44,8 @@ public class RssHandler extends DefaultHandler
 	public RssHandler(SyncTask syncTask, String lastUpdate, double maxProgress)
 	{
 		mSyncTask = syncTask;
-		mLastUpdate = lastUpdate;
+		//mLastUpdate = lastUpdate;
+		mLastUpdate = "2012-11-20 00:00:00";
 		mMaxProgress = maxProgress;
 	}
 
