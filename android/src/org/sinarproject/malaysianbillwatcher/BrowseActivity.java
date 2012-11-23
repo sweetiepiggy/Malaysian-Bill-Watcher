@@ -65,6 +65,7 @@ public class BrowseActivity extends ListActivity {
 			TextView status_v = (TextView) view.findViewById(R.id.status);
 			ImageView fav_v = (ImageView) view.findViewById(R.id.fav);
 
+			final int row_id = c.getInt(c.getColumnIndex(DbAdapter.KEY_ROWID));
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
 			String status = c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS));
 			boolean read = c.getInt(c.getColumnIndex(DbAdapter.KEY_READ)) != 0;
@@ -74,6 +75,23 @@ public class BrowseActivity extends ListActivity {
 			status_v.setText(status);
 			fav_v.setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 			view.setBackgroundColor(read ? BG_COLOR_READ : BG_COLOR_UNREAD);
+
+			fav_v.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					try {
+						DbAdapter dbHelper = new DbAdapter();
+						dbHelper.open_readwrite(BrowseActivity.this);
+						boolean fav = dbHelper.get_fav(row_id);
+						fav = !fav;
+						dbHelper.set_fav(row_id, fav);
+						dbHelper.close();
+						((ImageView)v).setImageResource(fav ? android.R.drawable.star_big_on :
+							android.R.drawable.star_big_off);
+					/* database might be locked when trying to open it read/write */
+					} catch (SQLiteException e) {
+					}
+				}
+			});
 		}
 	}
 

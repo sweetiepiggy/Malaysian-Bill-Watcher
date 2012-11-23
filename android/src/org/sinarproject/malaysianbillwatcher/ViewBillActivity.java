@@ -145,8 +145,7 @@ public class ViewBillActivity extends Activity {
 				} catch (SQLiteException e) {
 				}
 
-				ImageView fav_v = (ImageView) findViewById(R.id.fav);
-				fav_v.setImageResource(mFav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
+				((ImageView)v).setImageResource(mFav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 			}
 		});
 

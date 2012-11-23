@@ -412,6 +412,20 @@ public class DbAdapter
 			new String[] {Long.toString(id)});
 	}
 
+	public boolean get_fav(int row_id)
+	{
+		Cursor c = mDbHelper.mDb.query(TABLE_REVS,
+				new String[] {KEY_FAV},
+				KEY_ROWID + " = ?", new String[] {Integer.toString(row_id)},
+				null, null, null, null);
+		boolean ret = false;
+		if (c.moveToFirst()) {
+			ret = c.getInt(c.getColumnIndex(KEY_FAV)) != 0;
+		}
+		c.close();
+		return ret;
+	}
+
 	public String get_last_update()
 	{
 		Cursor c = mDbHelper.mDb.query(TABLE_REVS,
