@@ -302,6 +302,19 @@ public class DbAdapter
 	}
 
 	/** @return true on success, false on failure */
+	public boolean set_fav(long row_id, boolean fav)
+	{
+		ContentValues values = new ContentValues();
+		values.put(KEY_FAV, fav ? 1 : 0);
+
+		int rows_affected = mDbHelper.mDb.update(TABLE_REVS, values,
+			KEY_ROWID + " = ?",
+			new String[] {Long.toString(row_id)});
+
+		return rows_affected == 1;
+	}
+
+	/** @return true on success, false on failure */
 	public boolean set_read(long row_id, boolean read)
 	{
 		ContentValues values = new ContentValues();
@@ -361,7 +374,7 @@ public class DbAdapter
 		return mDbHelper.mDb.rawQuery("SELECT " + TABLE_REVS +
 				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
 				KEY_LONG_NAME + ", " + key_status + " AS " +
-				KEY_STATUS + ", " + KEY_READ +
+				KEY_STATUS + ", " + KEY_READ + ", " + KEY_FAV +
 				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
 				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +
 				TABLE_BILLS + "." + KEY_ROWID + " JOIN " +
@@ -385,7 +398,7 @@ public class DbAdapter
 				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
 				KEY_LONG_NAME + ", " + key_status + " AS " +
 				KEY_STATUS + ", " + KEY_YEAR + ", " + KEY_URL + ", " +
-				KEY_SINAR_URL + ", " + KEY_NAME + ", " +
+				KEY_SINAR_URL + ", " + KEY_NAME + ", " + KEY_FAV + ", " +
 				KEY_DATE_PRESENTED + ", " + KEY_READ_BY + ", " + KEY_SUPPORTED_BY +
 				" FROM " + TABLE_REVS + " JOIN " + TABLE_BILLS +
 				" ON " + TABLE_REVS + "." + KEY_BILL_ID + " == " +

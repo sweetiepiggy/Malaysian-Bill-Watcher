@@ -46,6 +46,7 @@
 	<string name="link">Link</string>
 
 	<string name="mark_as_read">Mark as read</string>
+	<string name="mark_as_fav">Mark as favorite</string>
 	<string name="mark_all_read">Mark all as read</string>
 	<string name="mark_all_unread">Mark all as unread</string>
 

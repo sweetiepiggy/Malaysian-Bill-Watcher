@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2012 Sinar Project
+
+    This file is part of Malaysian Bill Watcher.
+
+    Malaysian Bill Watcher is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    Malaysian Bill Watcher is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Malaysian Bill Watcher; if not, see <http://www.gnu.org/licenses/>.
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<ImageView
+		android:id="@+id/fav"
+		android:src="@android:drawable/star_big_off"
+		android:padding="3dp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+	<TextView
+		android:id="@+id/name"
+		style="@android:style/TextAppearance.Large"
+		android:layout_toRightOf="@id/fav"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+	<TextView
+		android:id="@+id/status"
+		android:layout_below="@id/name"
+		android:layout_alignParentRight="true"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+</RelativeLayout>
+

@@ -77,9 +77,10 @@ public class ViewBillActivity extends Activity {
 			String supported_by = c.getString(c.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
 			String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
 			String sinar_url = c.getString(c.getColumnIndex(DbAdapter.KEY_SINAR_URL));
+			boolean fav = c.getInt(c.getColumnIndex(DbAdapter.KEY_FAV)) != 0;
 
 			print_rev(long_name, name, year, status, date_presented,
-					read_by, supported_by, url, sinar_url);
+					read_by, supported_by, url, sinar_url, fav);
 		}
 		c.close();
 	}
@@ -109,17 +110,34 @@ public class ViewBillActivity extends Activity {
 				}
 			}
 		});
+
+		CheckBox fav_checkbox = (CheckBox) findViewById(R.id.mark_as_fav);
+
+		fav_checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
+				try {
+					DbAdapter dbHelper = new DbAdapter();
+					dbHelper.open_readwrite(ViewBillActivity.this);
+					dbHelper.set_fav(mRowId, is_checked);
+					dbHelper.close();
+				/* database might be locked when trying to open it read/write */
+				} catch (SQLiteException e) {
+				}
+			}
+		});
 	}
 
 	private void print_rev(final String long_name, String name, String year,
 			String status, String date_presented, String read_by,
-			String supported_by, final String url, final String sinar_url)
+			String supported_by, final String url, final String sinar_url,
+			boolean fav)
 	{
 		((TextView) findViewById(R.id.long_name)).setText(long_name);
 		((TextView) findViewById(R.id.name)).setText(name);
 		((TextView) findViewById(R.id.year)).setText(year);
 		((TextView) findViewById(R.id.status)).setText(status);
 		((TextView) findViewById(R.id.date_presented)).setText(date_presented);
+		((CheckBox) findViewById(R.id.mark_as_fav)).setChecked(fav);
 		if (read_by != null) {
 			((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
 		}

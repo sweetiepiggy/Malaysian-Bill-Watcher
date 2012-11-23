@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class BrowseActivity extends ListActivity {
@@ -53,23 +54,24 @@ public class BrowseActivity extends ListActivity {
 	{
 		public BrowseBillListAdapter(Context context, Cursor c)
 		{
-			super(context, android.R.layout.two_line_list_item, c);
+			super(context, R.layout.bill_row, c);
 		}
 
 		@Override
 		public void bindView(View view, Context context, Cursor c)
 		{
-			TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-			TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+			TextView name_v = (TextView) view.findViewById(R.id.name);
+			TextView status_v = (TextView) view.findViewById(R.id.status);
+			ImageView fav_v = (ImageView) view.findViewById(R.id.fav);
 
 			String long_name = c.getString(c.getColumnIndex(DbAdapter.KEY_LONG_NAME));
 			String status = c.getString(c.getColumnIndex(DbAdapter.KEY_STATUS));
 			boolean read = c.getInt(c.getColumnIndex(DbAdapter.KEY_READ)) != 0;
+			boolean fav = c.getInt(c.getColumnIndex(DbAdapter.KEY_FAV)) != 0;
 
-			text1.setText(long_name);
-			text2.setText(status);
-
-			text1.setTextAppearance(context, android.R.style.TextAppearance_Large);
+			name_v.setText(long_name);
+			status_v.setText(status);
+			fav_v.setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 			view.setBackgroundColor(read ? BG_COLOR_READ : BG_COLOR_UNREAD);
 		}
 	}
