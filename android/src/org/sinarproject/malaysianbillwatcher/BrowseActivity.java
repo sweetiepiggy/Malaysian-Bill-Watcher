@@ -43,7 +43,8 @@ import android.widget.TextView;
 public class BrowseActivity extends ListActivity {
 	private DbAdapter mDbHelper;
 	private String m_bill_name;
-	private String m_status;
+	private String m_status = "";
+	private boolean m_favorite = false;
 	private Calendar m_after_date;
 	private Calendar m_before_date;
 
@@ -86,10 +87,11 @@ public class BrowseActivity extends ListActivity {
 		Bundle b = intent.getExtras();
 		m_bill_name = (b == null) ? "" : b.getString("bill_name");
 		m_status = (b == null) ? "" : b.getString("status");
+		m_favorite = (b == null) ? false : b.getBoolean("favorite");
 
+		/* TODO: use status and favorite with SearchManager */
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			m_bill_name = intent.getStringExtra(SearchManager.QUERY);
-			m_status = "";
 		}
 
 		final Calendar now = Calendar.getInstance();
@@ -120,7 +122,8 @@ public class BrowseActivity extends ListActivity {
 		mDbHelper = new DbAdapter();
 		mDbHelper.open(this);
 
-		fill_data(m_bill_name, m_status, m_after_date, m_before_date);
+		fill_data(m_bill_name, m_status, m_favorite, m_after_date,
+				m_before_date);
 		init_click();
 	}
 
@@ -133,10 +136,10 @@ public class BrowseActivity extends ListActivity {
 		super.onDestroy();
 	}
 
-	private void fill_data(String bill_name, String status,
+	private void fill_data(String bill_name, String status, boolean fav,
 			Calendar after_date, Calendar before_date)
 	{
-		Cursor c = mDbHelper.fetch_revs(bill_name, status, after_date,
+		Cursor c = mDbHelper.fetch_revs(bill_name, status, fav, after_date,
 				before_date);
 		startManagingCursor(c);
 		BrowseBillListAdapter revs = new BrowseBillListAdapter(this, c);
@@ -180,7 +183,8 @@ public class BrowseActivity extends ListActivity {
 					m_after_date, m_before_date);
 			dbHelper.close();
 			pos = getListView().getFirstVisiblePosition();
-			fill_data(m_bill_name, m_status, m_after_date, m_before_date);
+			fill_data(m_bill_name, m_status, m_favorite,
+					m_after_date, m_before_date);
 			getListView().setSelection(pos);
 			return true;
 		case R.id.mark_all_unread:
@@ -190,7 +194,8 @@ public class BrowseActivity extends ListActivity {
 					m_after_date, m_before_date);
 			dbHelper.close();
 			pos = getListView().getFirstVisiblePosition();
-			fill_data(m_bill_name, m_status, m_after_date, m_before_date);
+			fill_data(m_bill_name, m_status, m_favorite,
+					m_after_date, m_before_date);
 			getListView().setSelection(pos);
 			return true;
 		default:

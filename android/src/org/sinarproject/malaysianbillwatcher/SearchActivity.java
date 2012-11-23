@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -201,6 +202,7 @@ public class SearchActivity extends Activity
 		b.putInt("after_year", m_after_year);
 		b.putInt("after_month", m_after_month);
 		b.putInt("after_day", m_after_day);
+		b.putBoolean("favorite", ((CheckBox) findViewById(R.id.fav)).isChecked());
 		intent.putExtras(b);
 		startActivity(intent);
 	}

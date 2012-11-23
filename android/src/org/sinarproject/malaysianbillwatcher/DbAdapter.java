@@ -361,7 +361,7 @@ public class DbAdapter
 		c.close();
 	}
 
-	public Cursor fetch_revs(String bill_name, String status,
+	public Cursor fetch_revs(String bill_name, String status, boolean fav,
 			Calendar after_date, Calendar before_date)
 	{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -370,6 +370,7 @@ public class DbAdapter
 		String key_status = KEY_STATUS + "_" +
 			mDbHelper.mCtx.getResources().getString(R.string.lang_code);
 		String any = mDbHelper.mCtx.getResources().getString(R.string.any);
+		String fav_str = fav ? "1" : "0";
 
 		return mDbHelper.mDb.rawQuery("SELECT " + TABLE_REVS +
 				"." + KEY_ROWID + " AS " + KEY_ROWID + ", " +
@@ -383,11 +384,12 @@ public class DbAdapter
 				KEY_ROWID +
 				" WHERE " + KEY_LONG_NAME + " LIKE ? AND " +
 					"(" + key_status + " = ? OR \"\" = ? OR \"" + any + "\" = ?) AND " +
+					"(\"0\" = ? OR " + KEY_FAV + " = ? " + " ) AND " +
 					KEY_UPDATE_DATE + " < " + "? AND " +
 					KEY_UPDATE_DATE + " > " + "? " +
 				"ORDER BY strftime('%s', " + KEY_UPDATE_DATE + ") DESC",
 			new String[] {"%" + bill_name + "%", status, status,
-				status, before, after});
+				status, fav_str, fav_str, before, after});
 	}
 
 	public Cursor fetch_rev(long id)

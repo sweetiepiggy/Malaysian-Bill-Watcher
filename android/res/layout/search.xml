@@ -55,6 +55,18 @@
 			android:drawSelectorOnTop="true"
 			android:prompt="@string/status"/>
 
+		<CheckBox
+			android:id="@+id/fav"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/fav" />
+		<View
+			android:layout_width="fill_parent"
+			android:layout_height="1dp"
+			android:layout_marginTop="5dp"
+			android:layout_marginBottom="5dp"
+			android:background="@android:color/darker_gray"/>
+
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -74,6 +86,13 @@
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent" />
 		</LinearLayout>
+
+		<View
+			android:layout_width="fill_parent"
+			android:layout_height="1dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginBottom="5dp"
+			android:background="@android:color/darker_gray"/>
 
 		<Button
 			android:id="@+id/search_button"
