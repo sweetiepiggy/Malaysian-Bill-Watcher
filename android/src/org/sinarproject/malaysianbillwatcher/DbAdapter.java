@@ -80,7 +80,7 @@ public class DbAdapter
 		"CREATE TABLE " + TABLE_REVS + " (" +
 		KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 		KEY_BILL_ID + " INTEGER, " +
-		KEY_URL + " TEXT, " +
+		KEY_URL + " TEXT UNIQUE, " +
 		KEY_SINAR_URL + " TEXT, " +
 		KEY_STATUS_ID + " TEXT, " +
 		KEY_YEAR + " TEXT, " +
@@ -274,7 +274,7 @@ public class DbAdapter
 			cv.put(KEY_UPDATE_DATE, update_date);
 		}
 
-		return mDbHelper.mDb.insert(TABLE_REVS, null, cv);
+		return mDbHelper.mDb.replace(TABLE_REVS, null, cv);
 	}
 
 	/** @return row_id or -1 if failed */
