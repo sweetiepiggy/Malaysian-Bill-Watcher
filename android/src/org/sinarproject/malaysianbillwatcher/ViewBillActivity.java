@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
@@ -39,6 +40,7 @@ public class ViewBillActivity extends Activity {
 
 	private DbAdapter mDbHelper;
 	private Long mRowId;
+	private boolean mFav = false;
 	private static final String TWITTER_ADDR = "@sinarproject";
 
 	/** Called when the activity is first created. */
@@ -77,10 +79,10 @@ public class ViewBillActivity extends Activity {
 			String supported_by = c.getString(c.getColumnIndex(DbAdapter.KEY_SUPPORTED_BY));
 			String url = c.getString(c.getColumnIndex(DbAdapter.KEY_URL));
 			String sinar_url = c.getString(c.getColumnIndex(DbAdapter.KEY_SINAR_URL));
-			boolean fav = c.getInt(c.getColumnIndex(DbAdapter.KEY_FAV)) != 0;
+			mFav = c.getInt(c.getColumnIndex(DbAdapter.KEY_FAV)) != 0;
 
 			print_rev(long_name, name, year, status, date_presented,
-					read_by, supported_by, url, sinar_url, fav);
+					read_by, supported_by, url, sinar_url, mFav);
 		}
 		c.close();
 	}
@@ -110,21 +112,6 @@ public class ViewBillActivity extends Activity {
 				}
 			}
 		});
-
-		CheckBox fav_checkbox = (CheckBox) findViewById(R.id.mark_as_fav);
-
-		fav_checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
-				try {
-					DbAdapter dbHelper = new DbAdapter();
-					dbHelper.open_readwrite(ViewBillActivity.this);
-					dbHelper.set_fav(mRowId, is_checked);
-					dbHelper.close();
-				/* database might be locked when trying to open it read/write */
-				} catch (SQLiteException e) {
-				}
-			}
-		});
 	}
 
 	private void print_rev(final String long_name, String name, String year,
@@ -137,13 +124,32 @@ public class ViewBillActivity extends Activity {
 		((TextView) findViewById(R.id.year)).setText(year);
 		((TextView) findViewById(R.id.status)).setText(status);
 		((TextView) findViewById(R.id.date_presented)).setText(date_presented);
-		((CheckBox) findViewById(R.id.mark_as_fav)).setChecked(fav);
 		if (read_by != null) {
 			((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
 		}
 		if (supported_by != null) {
 			((TextView) findViewById(R.id.supported_by)).setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
 		}
+
+		ImageView fav_v = (ImageView) findViewById(R.id.fav);
+		fav_v.setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
+		fav_v.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				mFav = !mFav;
+				try {
+					DbAdapter dbHelper = new DbAdapter();
+					dbHelper.open_readwrite(ViewBillActivity.this);
+					dbHelper.set_fav(mRowId, mFav);
+					dbHelper.close();
+				/* database might be locked when trying to open it read/write */
+				} catch (SQLiteException e) {
+				}
+
+				ImageView fav_v = (ImageView) findViewById(R.id.fav);
+				fav_v.setImageResource(mFav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
+			}
+		});
+
 		if (sinar_url != null) {
 			((TextView) findViewById(R.id.link)).setText(sinar_url.replace(" ", "%20"));
 
