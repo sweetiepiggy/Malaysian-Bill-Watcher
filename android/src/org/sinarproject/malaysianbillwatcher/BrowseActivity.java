@@ -110,6 +110,8 @@ public class BrowseActivity extends ListActivity {
 		/* TODO: use status and favorite with SearchManager */
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			m_bill_name = intent.getStringExtra(SearchManager.QUERY);
+			m_status = "";
+			m_favorite = false;
 		}
 
 		final Calendar now = Calendar.getInstance();
