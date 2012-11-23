@@ -22,9 +22,9 @@
 		</activity>
 		<activity android:name="ViewBillActivity">
 			<!-- extras end up NULL if this is used?? -->
-			<!--<meta-data
+			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".MalaysianBillWatcherActivity" />-->
+				android:value=".MalaysianBillWatcherActivity" />
 		</activity>
 		<activity android:name="BrowseActivity">
 			<intent-filter>
@@ -32,6 +32,9 @@
 			</intent-filter>
 			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable"/>
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".MalaysianBillWatcherActivity" />
 		</activity>
 		<activity android:name="SearchActivity"></activity>
 		<activity android:name="AboutActivity"></activity>

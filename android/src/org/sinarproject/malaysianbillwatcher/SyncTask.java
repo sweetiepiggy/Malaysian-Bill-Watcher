@@ -186,6 +186,10 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		b.putLong("row_id", row_id);
 		intent.putExtras(b);
 
+		/* set action to make intent unique so Extras aren't
+			duplicated among notifications */
+		intent.setAction(Long.toString(row_id));
+
 		TaskStackBuilder sb = TaskStackBuilder.create(mCtx);
 
 		sb.addParentStack(ViewBillActivity.class);
