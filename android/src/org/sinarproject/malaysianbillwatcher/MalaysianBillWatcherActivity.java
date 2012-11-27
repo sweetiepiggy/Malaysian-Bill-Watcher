@@ -31,7 +31,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class MalaysianBillWatcherActivity extends Activity {
-	private static final String SOURCE_URL = "https://github.com/sweetiepiggy/Malaysian-Bill-Watcher/tree/sp";
+	private static final String SOURCE_URL = "https://github.com/sweetiepiggy/Malaysian-Bill-Watcher/tree/sp/android";
 
 	/** Called when the activity is first created. */
 	@Override
