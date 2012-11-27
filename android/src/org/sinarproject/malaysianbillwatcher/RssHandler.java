@@ -188,27 +188,6 @@ public class RssHandler extends DefaultHandler
 		return month_name;
 	}
 
-	//private long update_db()
-	//{
-	//	publishProgress(++billCnt);
-	//	long row_id = -1;
-
-	//	try {
-	//		DbAdapter dbHelper = new DbAdapter();
-	//		dbHelper.open_readwrite(mCtx, false);
-
-	//		row_id = dbHelper.create_bill_rev(long_name, year, status, url,
-	//				sinar_url, name, read_by, supported_by,
-	//				date_presented, update_date);
-
-	//		dbHelper.close();
-	//	/* database might be locked when trying to open it read/write */
-	//	} catch (SQLiteException e) {
-	//	}
-
-	//	return row_id;
-	//}
-
 	private String strip_ws(String s)
 	{
 		return s.replaceFirst("^\\s+", "").replaceFirst("\\s+$", "");

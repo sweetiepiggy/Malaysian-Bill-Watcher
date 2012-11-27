@@ -109,6 +109,7 @@ public class ViewBillActivity extends Activity {
 					dbHelper.close();
 				/* database might be locked when trying to open it read/write */
 				} catch (SQLiteException e) {
+					((CheckBox) findViewById(R.id.mark_as_read)).setChecked(!is_checked);
 				}
 			}
 		});
@@ -135,17 +136,17 @@ public class ViewBillActivity extends Activity {
 		fav_v.setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 		fav_v.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mFav = !mFav;
 				try {
+					boolean fav = !mFav;
 					DbAdapter dbHelper = new DbAdapter();
 					dbHelper.open_readwrite(ViewBillActivity.this);
-					dbHelper.set_fav(mRowId, mFav);
+					dbHelper.set_fav(mRowId, !fav);
 					dbHelper.close();
+					((ImageView)v).setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
+					mFav = fav;
 				/* database might be locked when trying to open it read/write */
 				} catch (SQLiteException e) {
 				}
-
-				((ImageView)v).setImageResource(mFav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 			}
 		});
 
