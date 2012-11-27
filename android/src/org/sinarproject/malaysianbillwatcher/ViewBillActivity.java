@@ -167,9 +167,11 @@ public class ViewBillActivity extends Activity {
 			view_bill_button.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v)
 				{
-					String wrapper_url = url.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
+					//String wrapper_url = url.indexOf(' ') == -1 ? CACHE_URL : DOCS_URL;
+					String wrapper_url = DOCS_URL;
 					String encoded_url = Uri.encode(url).replace("+", "%20");
 					view_url(wrapper_url + encoded_url);
+					view_url(encoded_url);
 				}
 			});
 
@@ -178,7 +180,8 @@ public class ViewBillActivity extends Activity {
 				public void onClick(View v)
 				{
 					String encoded_url = url.replace(" ", "%20");
-					view_url(ARCHIVE_URL + encoded_url);
+					//view_url(ARCHIVE_URL + encoded_url);
+					view_url(encoded_url);
 				}
 			});
 		}
