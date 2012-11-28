@@ -31,6 +31,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ViewBillActivity extends Activity {
@@ -120,16 +121,28 @@ public class ViewBillActivity extends Activity {
 			String supported_by, final String url, final String sinar_url,
 			boolean fav)
 	{
-		((TextView) findViewById(R.id.long_name)).setText(long_name);
-		((TextView) findViewById(R.id.name)).setText(name);
-		((TextView) findViewById(R.id.year)).setText(year);
-		((TextView) findViewById(R.id.status)).setText(status);
-		((TextView) findViewById(R.id.date_presented)).setText(date_presented);
+		TextView long_name_view = (TextView) findViewById(R.id.long_name);
+		TextView name_view = (TextView) findViewById(R.id.name);
+		TextView year_view = (TextView) findViewById(R.id.year);
+		TextView status_view = (TextView) findViewById(R.id.status);
+		TextView date_presented_view = (TextView) findViewById(R.id.date_presented);
+		TextView read_by_view = (TextView) findViewById(R.id.read_by);
+		TextView supported_by_view = (TextView) findViewById(R.id.supported_by);
+		TextView link_view = (TextView) findViewById(R.id.link);
+		Button view_bill_button = (Button) findViewById(R.id.view_bill);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+
+		long_name_view.setText(long_name);
+		name_view.setText(name);
+		year_view.setText(year);
+		status_view.setText(status);
+		date_presented_view.setText(date_presented);
+
 		if (read_by != null) {
-			((TextView) findViewById(R.id.read_by)).setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
+			read_by_view.setText(read_by.replaceAll(", ", "\n").replace("\\", ""));
 		}
 		if (supported_by != null) {
-			((TextView) findViewById(R.id.supported_by)).setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
+			supported_by_view.setText(supported_by.replaceAll(", ", "\n").replace("\\", ""));
 		}
 
 		ImageView fav_v = (ImageView) findViewById(R.id.fav);
@@ -162,8 +175,9 @@ public class ViewBillActivity extends Activity {
 			});
 		}
 
-		if (url != null) {
-			Button view_bill_button = (Button) findViewById(R.id.view_bill);
+		if (url == null) {
+			layout.removeView(view_bill_button);
+		} else {
 			view_bill_button.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v)
 				{
@@ -184,6 +198,31 @@ public class ViewBillActivity extends Activity {
 					view_url(encoded_url);
 				}
 			});
+		}
+
+		if (name == null) {
+			layout.removeView(findViewById(R.id.name_label));
+			layout.removeView(name_view);
+		}
+		if (year == null) {
+			layout.removeView(findViewById(R.id.year_label));
+			layout.removeView(year_view);
+		}
+		if (status == null) {
+			layout.removeView(findViewById(R.id.status_label));
+			layout.removeView(status_view);
+		}
+		if (date_presented == null) {
+			layout.removeView(findViewById(R.id.date_presented_label));
+			layout.removeView(date_presented_view);
+		}
+		if (read_by == null) {
+			layout.removeView(findViewById(R.id.read_by_label));
+			layout.removeView(read_by_view);
+		}
+		if (supported_by == null) {
+			layout.removeView(findViewById(R.id.supported_by_label));
+			layout.removeView(supported_by_view);
 		}
 	}
 
