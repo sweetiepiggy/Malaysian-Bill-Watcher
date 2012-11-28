@@ -153,7 +153,7 @@ public class ViewBillActivity extends Activity {
 					boolean fav = !mFav;
 					DbAdapter dbHelper = new DbAdapter();
 					dbHelper.open_readwrite(ViewBillActivity.this);
-					dbHelper.set_fav(mRowId, !fav);
+					dbHelper.set_fav(mRowId, fav);
 					dbHelper.close();
 					((ImageView)v).setImageResource(fav ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 					mFav = fav;
