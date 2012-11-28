@@ -224,6 +224,13 @@ public class ViewBillActivity extends Activity {
 			layout.removeView(findViewById(R.id.supported_by_label));
 			layout.removeView(supported_by_view);
 		}
+
+		if (name == null && year == null && status == null) {
+			layout.removeView(findViewById(R.id.status_divider));
+		}
+		if (date_presented == null && read_by == null && supported_by == null) {
+			layout.removeView(findViewById(R.id.supported_divider));
+		}
 	}
 
 	private void view_url(String url)

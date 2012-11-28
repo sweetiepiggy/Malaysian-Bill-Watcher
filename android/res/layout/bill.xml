@@ -83,6 +83,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />
 		<View
+			android:id="@+id/status_divider"
 			android:layout_width="fill_parent"
 			android:layout_height="1dp"
 			android:layout_marginTop="5dp"
@@ -122,6 +123,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />
 		<View
+			android:id="@+id/supported_divider"
 			android:layout_width="fill_parent"
 			android:layout_height="1dp"
 			android:layout_marginTop="5dp"
