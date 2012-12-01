@@ -185,7 +185,7 @@ public class ViewBillActivity extends Activity {
 					String wrapper_url = DOCS_URL;
 					String encoded_url = Uri.encode(url).replace("+", "%20");
 					view_url(wrapper_url + encoded_url);
-					view_url(encoded_url);
+					//view_url(encoded_url);
 				}
 			});
 
