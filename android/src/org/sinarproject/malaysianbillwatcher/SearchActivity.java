@@ -142,9 +142,9 @@ public class SearchActivity extends Activity
 		} while (c.moveToNext());
 		c.close();
 
-		ArrayAdapter status_adapter = new ArrayAdapter(this,
+		ArrayAdapter<String> status_adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item,
-				stati.toArray());
+				(String[]) stati.toArray());
 		status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		Spinner status_spinner = (Spinner) findViewById(R.id.status_spinner);
 		status_spinner.setAdapter(status_adapter);
