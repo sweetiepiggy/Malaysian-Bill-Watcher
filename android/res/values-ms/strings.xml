@@ -52,6 +52,8 @@
 	<string name="any">Mana-mana</string>
 	<string name="fav">Bil tercatat</string>
 
+	<string name="unknown_host">Gagal menyambung ke pelayan penampungan</string>
+
 	<string name="lang_code">ms</string>
 
 	<string name="gpl">

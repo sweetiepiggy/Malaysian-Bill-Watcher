@@ -52,6 +52,8 @@
 	<string name="any">Any</string>
 	<string name="fav">Starred bills</string>
 
+	<string name="unknown_host">Unable to connect to internet</string>
+
 	<string name="lang_code">en</string>
 
 	<string name="gpl">

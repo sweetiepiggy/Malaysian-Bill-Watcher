@@ -19,21 +19,28 @@
 
 package org.sinarproject.malaysianbillwatcher;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,6 +57,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 	private Context mCtx;
 	private int mAddedBills = 0;
+	private String mAlertMsg = null;
 	private ProgressDialog mProgressDialog;
 
 	public SyncTask(Context ctx)
@@ -82,8 +90,17 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			send_notifications(bills);
 
 			publishProgress(100);
-		/* TODO: properly handle exceptions */
-		} catch (Exception e) {
+
+		/* probably no internet connection */
+		} catch (UnknownHostException e) {
+			mAlertMsg = mCtx.getResources().getString(R.string.unknown_host);
+		} catch (MalformedURLException e) {
+			throw new Error(e);
+		} catch (SAXException e) {
+			throw new Error(e);
+		} catch (ParserConfigurationException e) {
+			throw new Error(e);
+		} catch (IOException e) {
 			throw new Error(e);
 		}
 
@@ -114,10 +131,14 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			} catch (IllegalArgumentException e) {
 			}
 		}
-		Toast.makeText(mCtx,
-				Integer.toString(mAddedBills) + " " +
-				mCtx.getResources().getString(R.string.updates_found),
-				Toast.LENGTH_SHORT).show();
+		if (mAlertMsg != null) {
+			alert(mAlertMsg);
+		} else {
+			Toast.makeText(mCtx,
+					Integer.toString(mAddedBills) + " " +
+					mCtx.getResources().getString(R.string.updates_found),
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -229,6 +250,18 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		NotificationManager nm = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		nm.notify(0, builder.build());
+	}
+
+	private void alert(String msg)
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
+		alert.setTitle(mCtx.getResources().getString(android.R.string.dialog_alert_title));
+		alert.setMessage(msg);
+		alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		alert.show();
 	}
 }
 
