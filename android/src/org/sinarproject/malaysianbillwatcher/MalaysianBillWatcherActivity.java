@@ -28,7 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
 public class MalaysianBillWatcherActivity extends Activity {
 	private static final String SOURCE_URL = "https://github.com/sweetiepiggy/Malaysian-Bill-Watcher/tree/sp/android";
@@ -56,7 +56,7 @@ public class MalaysianBillWatcherActivity extends Activity {
 	private void init()
 	{
 		setContentView(R.layout.main);
-		Button browse = (Button) findViewById(R.id.browse);
+		TextView browse = (TextView) findViewById(R.id.browse);
 		browse.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{
@@ -65,7 +65,7 @@ public class MalaysianBillWatcherActivity extends Activity {
 			}
 		});
 
-		Button search = (Button) findViewById(R.id.search);
+		TextView search = (TextView) findViewById(R.id.search);
 		search.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v)
 			{

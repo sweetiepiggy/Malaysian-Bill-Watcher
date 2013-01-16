@@ -26,21 +26,25 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
 	android:gravity="center" >
-	<Button
+	<TextView
 		android:id="@+id/browse"
 		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:gravity="center"
 		android:drawableTop="@android:drawable/ic_menu_agenda"
+		android:padding="25dp"
+		style="@android:style/TextAppearance.Large"
 		android:text="@string/browse_bills" />
-	<Button
+	<TextView
 		android:id="@+id/search"
 		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:gravity="center"
 		android:drawableTop="@android:drawable/ic_menu_search"
+		android:padding="25dp"
+		style="@android:style/TextAppearance.Large"
 		android:text="@string/search_bills" />
 </LinearLayout>
 
