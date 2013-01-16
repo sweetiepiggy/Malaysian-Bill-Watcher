@@ -138,7 +138,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			} catch (IllegalArgumentException e) {
 			}
 		}
-		if (mAlertMsg != null && mCtx != null) {
+		if (mAlertMsg != null && mCtx != null && mProgressDialog != null) {
 			alert(mAlertMsg);
 		} else if (mProgressDialog != null && mCtx != null) {
 			Toast.makeText(mCtx,
