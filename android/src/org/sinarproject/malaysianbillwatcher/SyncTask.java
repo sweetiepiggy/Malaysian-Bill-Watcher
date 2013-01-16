@@ -193,6 +193,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			while (itr.hasNext()) {
 				ContentValues cv = itr.next();
 				send_notification(cv.getAsString(DbAdapter.KEY_LONG_NAME),
+						cv.getAsString(DbAdapter.KEY_STATUS),
 						cv.getAsLong(DbAdapter.KEY_ROWID));
 			}
 		} else {
@@ -200,13 +201,13 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		}
 	}
 
-	private void send_notification(String long_name, long row_id)
+	private void send_notification(String long_name, String status, long row_id)
 	{
 		NotificationCompat.Builder builder =
 			new NotificationCompat.Builder(mCtx)
 				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle(mCtx.getResources().getString(R.string.app_name))
-				.setContentText(long_name);
+				.setContentTitle(long_name)
+				.setContentText(status);
 
 		Intent intent = new Intent(mCtx, ViewBillActivity.class);
 
