@@ -25,8 +25,8 @@
 	<string name="view_bill">Lihat</string>
 	<string name="download">Muat\nTurun</string>
 	<string name="tweet">Tweet</string>
-	<string name="browse_bills">Melayari\nUndang2</string>
-	<string name="search_bills">Carian\nUndang2</string>
+	<string name="browse_bills">melayari</string>
+	<string name="search_bills">carian</string>
 	<string name="sync">Penyegerakan</string>
 	<string name="syncing">Segerakkan...</string>
 	<string name="about">Maklumat</string>

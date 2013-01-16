@@ -25,8 +25,8 @@
 	<string name="view_bill">查看</string>
 	<string name="download">下载</string>
 	<string name="tweet">啁啾 </string>
-	<string name="browse_bills">浏览法案</string>
-	<string name="search_bills">搜索法案</string>
+	<string name="browse_bills">浏览</string>
+	<string name="search_bills">搜索</string>
 	<string name="sync">同步</string>
 	<string name="syncing">同步中...</string>
 	<string name="about">关于</string>

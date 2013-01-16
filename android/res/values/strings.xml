@@ -25,8 +25,8 @@
 	<string name="view_bill">View</string>
 	<string name="download">Download</string>
 	<string name="tweet">Tweet</string>
-	<string name="browse_bills">Browse\nBills</string>
-	<string name="search_bills">Search\nBills</string>
+	<string name="browse_bills">browse</string>
+	<string name="search_bills">search</string>
 	<string name="sync">Sync</string>
 	<string name="syncing">Syncing...</string>
 	<string name="about">About</string>
