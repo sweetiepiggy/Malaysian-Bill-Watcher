@@ -73,15 +73,6 @@ public class MalaysianBillWatcherActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-
-		Button sync = (Button) findViewById(R.id.sync);
-		sync.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v)
-			{
-				SyncTask sync = new SyncTask(MalaysianBillWatcherActivity.this);
-				sync.execute();
-			}
-		});
 	}
 
 	@Override
@@ -94,6 +85,10 @@ public class MalaysianBillWatcherActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.sync:
+			SyncTask sync = new SyncTask(MalaysianBillWatcherActivity.this);
+			sync.execute();
+			return true;
 		case R.id.about:
 			Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
 			startActivity(intent);

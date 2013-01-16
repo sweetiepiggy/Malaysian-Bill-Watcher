@@ -42,13 +42,5 @@
 		android:gravity="center"
 		android:drawableTop="@android:drawable/ic_menu_search"
 		android:text="@string/search_bills" />
-	<Button
-		android:id="@+id/sync"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		android:layout_gravity="center"
-		android:gravity="center"
-		android:drawableTop="@android:drawable/stat_notify_sync"
-		android:text="@string/sync" />
 </LinearLayout>
 
