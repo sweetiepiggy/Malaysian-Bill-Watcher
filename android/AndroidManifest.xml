@@ -38,6 +38,7 @@
 		</activity>
 		<activity android:name="SearchActivity"></activity>
 		<activity android:name="AboutActivity"></activity>
+		<service android:name=".BillWatcherService"></service>
 	</application>
 </manifest>
 

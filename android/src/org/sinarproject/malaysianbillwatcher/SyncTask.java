@@ -58,12 +58,19 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	private Context mCtx;
 	private int mAddedBills = 0;
 	private String mAlertMsg = null;
-	private ProgressDialog mProgressDialog;
+	private ProgressDialog mProgressDialog = null;
 
 	public SyncTask(Context ctx)
 	{
+		this(ctx, true);
+	}
+
+	public SyncTask(Context ctx, boolean showProgress)
+	{
 		mCtx = ctx;
-		mProgressDialog = new ProgressDialog(mCtx);
+		if (ctx != null && showProgress) {
+			mProgressDialog = new ProgressDialog(mCtx);
+		}
 	}
 
 	@Override
@@ -111,7 +118,7 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	protected void onPreExecute()
 	{
 		super.onPreExecute();
-		if (mProgressDialog != null) {
+		if (mProgressDialog != null && mCtx != null) {
 			mProgressDialog.setMessage(mCtx.getResources().getString(R.string.syncing));
 			mProgressDialog.setIndeterminate(false);
 			mProgressDialog.setMax(100);
@@ -124,16 +131,16 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	@Override
 	protected void onPostExecute(Void result)
 	{
-		if (mProgressDialog != null) {
+		if (mProgressDialog != null && mCtx != null) {
 			try {
 				mProgressDialog.dismiss();
 			/* view might no longer be attached to window manager */
 			} catch (IllegalArgumentException e) {
 			}
 		}
-		if (mAlertMsg != null) {
+		if (mAlertMsg != null && mCtx != null) {
 			alert(mAlertMsg);
-		} else {
+		} else if (mProgressDialog != null && mCtx != null) {
 			Toast.makeText(mCtx,
 					Integer.toString(mAddedBills) + " " +
 					mCtx.getResources().getString(R.string.updates_found),

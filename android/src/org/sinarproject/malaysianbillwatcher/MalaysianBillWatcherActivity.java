@@ -35,7 +35,8 @@ public class MalaysianBillWatcherActivity extends Activity {
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 
 		init();
@@ -47,6 +48,9 @@ public class MalaysianBillWatcherActivity extends Activity {
 		/* database might be locked when trying to open it read/write */
 		} catch (SQLiteException e) {
 		}
+
+		Intent intent = new Intent(this, BillWatcherService.class);
+		startService(intent);
 	}
 
 	private void init()
