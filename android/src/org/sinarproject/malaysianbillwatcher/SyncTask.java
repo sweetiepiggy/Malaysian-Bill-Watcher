@@ -101,6 +101,8 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		/* probably no internet connection */
 		} catch (UnknownHostException e) {
 			mAlertMsg = mCtx.getResources().getString(R.string.unknown_host);
+		} catch (java.io.FileNotFoundException e) {
+			mAlertMsg = mCtx.getResources().getString(R.string.file_not_found) + ":\n" + e.getMessage();
 		} catch (MalformedURLException e) {
 			throw new Error(e);
 		} catch (SAXException e) {

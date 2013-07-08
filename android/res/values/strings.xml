@@ -53,6 +53,7 @@
 	<string name="fav">Starred bills</string>
 
 	<string name="unknown_host">Unable to connect to internet</string>
+	<string name="file_not_found">File not found</string>
 
 	<string name="lang_code">en</string>
 

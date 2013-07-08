@@ -53,6 +53,7 @@
 	<string name="fav">Bil tercatat</string>
 
 	<string name="unknown_host">Gagal menyambung ke pelayan penampungan</string>
+	<string name="file_not_found">Fail tidak dijumpai</string>
 
 	<string name="lang_code">ms</string>
 

@@ -53,6 +53,7 @@
 	<string name="fav">被标记法案</string>
 
 	<string name="unknown_host">无法连接到互联网</string>
+	<string name="file_not_found">文件未找到</string>
 
 	<string name="lang_code">zh</string>
 
