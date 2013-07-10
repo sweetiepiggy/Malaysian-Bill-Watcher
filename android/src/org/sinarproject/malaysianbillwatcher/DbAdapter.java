@@ -272,6 +272,10 @@ public class DbAdapter
 		}
 		if (update_date != null && update_date.length() != 0) {
 			cv.put(KEY_UPDATE_DATE, update_date);
+		} else {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			String now = df.format(Calendar.getInstance().getTime());
+			cv.put(KEY_UPDATE_DATE, now);
 		}
 
 		return mDbHelper.mDb.replace(TABLE_REVS, null, cv);

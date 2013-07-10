@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Sinar Project
+    Copyright (C) 2012,2013 Sinar Project
 
     This file is part of Malaysian Bill Watcher.
 
@@ -21,18 +21,9 @@ package org.sinarproject.malaysianbillwatcher;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -53,7 +44,8 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	private final int MAX_NOTIFICATIONS = 3;
 
 	/* TODO: move to Constants.java */
-	private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
+	//private final String BILLWATCHER_URL = "http://billwatcher.sinarproject.org/feeds/";
+	private final String PARLIMEN_URL = "http://www.parlimen.gov.my/bills-dewan-rakyat.html?uweb=dr&arkib=yes&lang=en#";
 
 	private Context mCtx;
 	private int mAddedBills = 0;
@@ -77,22 +69,25 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 	protected Void doInBackground(Void... params)
 	{
 		try {
-			SAXParserFactory spf = SAXParserFactory.newInstance();
-			SAXParser sp = spf.newSAXParser();
-			XMLReader xr = sp.getXMLReader();
+			//SAXParserFactory spf = SAXParserFactory.newInstance();
+			//SAXParser sp = spf.newSAXParser();
+			//XMLReader xr = sp.getXMLReader();
 
-			URL url = new URL(BILLWATCHER_URL);
+			//URL url = new URL(BILLWATCHER_URL);
 
 			DbAdapter dbHelper = new DbAdapter();
 			dbHelper.open(mCtx);
 			String lastUpdate = dbHelper.get_last_update();
 			dbHelper.close();
 
-			RssHandler rss_handler = new RssHandler(this, lastUpdate, 25);
-			xr.setContentHandler(rss_handler);
-			xr.parse(new InputSource(url.openStream()));
+			//RssHandler rss_handler = new RssHandler(this, lastUpdate, 25);
+			//xr.setContentHandler(handler);
+			//xr.parse(new InputSource(url.openStream()));
 
-			LinkedList<ContentValues> bills = rss_handler.getBills();
+			ParlimenHandler handler = new ParlimenHandler(this, lastUpdate, 25);
+			LinkedList<ContentValues> bills = handler.parseBills(PARLIMEN_URL);
+			//LinkedList<ContentValues> bills = rss_handler.getBills();
+
 			mAddedBills = updateDb(bills, 25, 100);
 			send_notifications(bills);
 
@@ -105,10 +100,10 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			mAlertMsg = mCtx.getResources().getString(R.string.file_not_found) + ":\n" + e.getMessage();
 		} catch (MalformedURLException e) {
 			throw new Error(e);
-		} catch (SAXException e) {
-			throw new Error(e);
-		} catch (ParserConfigurationException e) {
-			throw new Error(e);
+		//} catch (SAXException e) {
+		//	throw new Error(e);
+		//} catch (ParserConfigurationException e) {
+		//	throw new Error(e);
 		} catch (IOException e) {
 			throw new Error(e);
 		}
