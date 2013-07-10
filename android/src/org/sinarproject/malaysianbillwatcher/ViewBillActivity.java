@@ -128,7 +128,6 @@ public class ViewBillActivity extends Activity {
 		TextView date_presented_view = (TextView) findViewById(R.id.date_presented);
 		TextView read_by_view = (TextView) findViewById(R.id.read_by);
 		TextView supported_by_view = (TextView) findViewById(R.id.supported_by);
-		TextView link_view = (TextView) findViewById(R.id.link);
 		Button view_bill_button = (Button) findViewById(R.id.view_bill);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 
@@ -163,14 +162,15 @@ public class ViewBillActivity extends Activity {
 			}
 		});
 
-		if (sinar_url != null) {
-			((TextView) findViewById(R.id.link)).setText(sinar_url.replace(" ", "%20"));
+		final String tweet_url = sinar_url != null ? sinar_url : url;
+		if (tweet_url != null) {
+			((TextView) findViewById(R.id.link)).setText(tweet_url.replace(" ", "%20"));
 
 			Button tweet_button = (Button) findViewById(R.id.tweet);
 			tweet_button.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v)
 				{
-					send_tweet(long_name, sinar_url);
+					send_tweet(long_name, tweet_url);
 				}
 			});
 		}
