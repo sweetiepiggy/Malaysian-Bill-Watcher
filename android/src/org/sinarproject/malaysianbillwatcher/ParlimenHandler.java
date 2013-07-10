@@ -33,6 +33,8 @@ import android.content.ContentValues;
 
 public class ParlimenHandler extends DefaultHandler
 {
+	private final String BILL_BASE_URL = "http://www.parlimen.gov.my";
+
 	private SyncTask mSyncTask;
 	private String mLastUpdate = "";
 	private double mMaxProgress = 100;
@@ -59,25 +61,39 @@ public class ParlimenHandler extends DefaultHandler
 			for (Element tr : tr_itr.next().siblingElements()) {
 				Elements tds = table.select("td");
 				if (tds.size() > 3) {
+					ContentValues bill = new ContentValues();
+
 					String name = tds.get(0).text();
+					bill.put(DbAdapter.KEY_NAME, name);
+
 					String year = tds.get(1).text();
+					bill.put(DbAdapter.KEY_YEAR, year);
+
 					String long_name = tds.get(2).text();
+					bill.put(DbAdapter.KEY_LONG_NAME, long_name);
+
 					android.util.Log.i("SyncTask", "name: " + name);
 					android.util.Log.i("SyncTask", "year: " + year);
 					android.util.Log.i("SyncTask", "long_name: " + long_name);
+
+					Iterator<Element> a_itr = tds.get(0).select("a").iterator();
+					if (a_itr.hasNext()) {
+						String bill_url = a_itr.next().attr("onclick");
+						int start = bill_url.indexOf('\'') + 1;
+						int end = bill_url.indexOf('\'', start);
+						bill_url = BILL_BASE_URL + bill_url.substring(start, end);
+						android.util.Log.i("SyncTask", "url: " + bill_url);
+						bill.put(DbAdapter.KEY_URL, bill_url);
+					}
 
 					Iterator<Element> div_itr = tds.get(3).select("div").iterator();
 					if (div_itr.hasNext()) {
 						String status = div_itr.next().text();
 						android.util.Log.i("SyncTask", "status: " + status);
-
-						ContentValues bill = new ContentValues();
-						bill.put(DbAdapter.KEY_NAME, name);
-						bill.put(DbAdapter.KEY_YEAR, year);
-						bill.put(DbAdapter.KEY_LONG_NAME, long_name);
 						bill.put(DbAdapter.KEY_STATUS, status);
-						ret.addFirst(bill);
 					}
+
+					ret.addFirst(bill);
 				}
 			}
 		}
