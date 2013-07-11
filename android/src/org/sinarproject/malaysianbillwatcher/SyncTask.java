@@ -89,8 +89,9 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 			publishProgress(25);
 			//LinkedList<ContentValues> bills = rss_handler.getBills();
 
-			mAddedBills = updateDb(bills, 25, 100);
-			send_notifications(bills);
+			LinkedList<ContentValues> newBills = updateDb(bills, 25, 100);
+			mAddedBills = newBills.size();
+			sendNotifications(newBills);
 
 			publishProgress(100);
 
@@ -160,30 +161,32 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 		publishProgress(progress);
 	}
 
-	private int updateDb(LinkedList<ContentValues> bills, int progressOffset,
-			int maxProgress)
+	private LinkedList<ContentValues> updateDb(LinkedList<ContentValues> bills,
+			int progressOffset, int maxProgress)
 	{
 		int billCnt = bills.size();
-		int addedBills = 0;
+		LinkedList<ContentValues> newBills = new LinkedList<ContentValues>();
 
 		Iterator<ContentValues> itr = bills.listIterator();
 		DbAdapter dbHelper = new DbAdapter();
 		dbHelper.open_readwrite(mCtx, false);
 		while (itr.hasNext()) {
-			ContentValues cv = itr.next();
-			long row_id = dbHelper.create_bill_rev(cv);
-			cv.put(DbAdapter.KEY_ROWID, row_id);
-			++addedBills;
-			publishProgress(java.lang.Math.min(maxProgress,
-						progressOffset +
-						(int)((maxProgress - progressOffset) *
-							(double) addedBills / billCnt)));
+			ContentValues bill = itr.next();
+			if (!dbHelper.revExists(bill)) {
+				long row_id = dbHelper.create_bill_rev(bill);
+				bill.put(DbAdapter.KEY_ROWID, row_id);
+				newBills.addLast(bill);
+				publishProgress(java.lang.Math.min(maxProgress,
+							progressOffset +
+							(int)((maxProgress - progressOffset) *
+								(double) newBills.size() / billCnt)));
+			}
 		}
 		dbHelper.close();
-		return addedBills;
+		return newBills;
 	}
 
-	private void send_notifications(LinkedList<ContentValues> bills)
+	private void sendNotifications(LinkedList<ContentValues> bills)
 	{
 		int billCnt = bills.size();
 		if (billCnt <= MAX_NOTIFICATIONS) {

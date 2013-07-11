@@ -281,6 +281,25 @@ public class DbAdapter
 		return mDbHelper.mDb.replace(TABLE_REVS, null, cv);
 	}
 
+	public boolean revExists(ContentValues cv)
+	{
+		boolean ret = false;
+		String url = cv.getAsString(KEY_URL);
+		android.util.Log.i("DbAdapter", "url: " + url);
+
+		if (url != null && url.length() != 0) {
+			Cursor c = mDbHelper.mDb.query(TABLE_REVS,
+					new String[] {KEY_ROWID},
+					KEY_URL + " = ?", new String[] {url},
+					null, null, null, "1");
+			ret = c.moveToFirst();
+		} else {
+			ret = false;
+		}
+
+		return ret;
+	}
+
 	/** @return row_id or -1 if failed */
 	private long fetch_or_create_status(String status_en)
 	{
