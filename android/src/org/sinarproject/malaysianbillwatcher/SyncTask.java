@@ -75,17 +75,18 @@ public class SyncTask extends AsyncTask<Void, Integer, Void>
 
 			//URL url = new URL(BILLWATCHER_URL);
 
-			DbAdapter dbHelper = new DbAdapter();
-			dbHelper.open(mCtx);
-			String lastUpdate = dbHelper.get_last_update();
-			dbHelper.close();
+			//DbAdapter dbHelper = new DbAdapter();
+			//dbHelper.open(mCtx);
+			//String lastUpdate = dbHelper.get_last_update();
+			//dbHelper.close();
 
 			//RssHandler rss_handler = new RssHandler(this, lastUpdate, 25);
 			//xr.setContentHandler(handler);
 			//xr.parse(new InputSource(url.openStream()));
 
-			ParlimenHandler handler = new ParlimenHandler(this, lastUpdate, 25);
+			ParlimenHandler handler = new ParlimenHandler(this, 25);
 			LinkedList<ContentValues> bills = handler.parseBills(PARLIMEN_URL);
+			publishProgress(25);
 			//LinkedList<ContentValues> bills = rss_handler.getBills();
 
 			mAddedBills = updateDb(bills, 25, 100);

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012,2013 Sinar Project
+    Copyright (C) 2013 Sinar Project
 
     This file is part of Malaysian Bill Watcher.
 
@@ -36,16 +36,14 @@ public class ParlimenHandler extends DefaultHandler
 	private final String BILL_BASE_URL = "http://www.parlimen.gov.my";
 
 	private SyncTask mSyncTask;
-	private String mLastUpdate = "";
 	private double mMaxProgress = 100;
 
 	private LinkedList<ContentValues> mBills = new LinkedList<ContentValues>();
 	private ContentValues mCurBill = new ContentValues();
 
-	public ParlimenHandler(SyncTask syncTask, String lastUpdate, double maxProgress)
+	public ParlimenHandler(SyncTask syncTask, double maxProgress)
 	{
 		mSyncTask = syncTask;
-		mLastUpdate = lastUpdate;
 		mMaxProgress = maxProgress;
 	}
 
@@ -58,7 +56,11 @@ public class ParlimenHandler extends DefaultHandler
 
 		Iterator<Element> tr_itr = table.select("tr").iterator();
 		if (tr_itr.hasNext()) {
-			for (Element tr : tr_itr.next().siblingElements()) {
+			Elements trs = tr_itr.next().siblingElements();
+			int rows = trs.size();
+			int i = 0;
+			for (Element tr : trs) {
+				mSyncTask.updateProgress((int)(((double) i / rows) * mMaxProgress));
 				Elements tds = table.select("td");
 				if (tds.size() > 3) {
 					ContentValues bill = new ContentValues();
@@ -95,6 +97,7 @@ public class ParlimenHandler extends DefaultHandler
 
 					ret.addFirst(bill);
 				}
+				++i;
 			}
 		}
 
